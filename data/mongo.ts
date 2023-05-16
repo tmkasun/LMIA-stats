@@ -13,7 +13,7 @@ export async function addEntry(batch: any) {
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Request-Headers": "*",
-      "api-key": "4DrgfRdPUaG6Mk8WpaR8wOQvQfMqR4t0CtcML1bipxmnTFDFevVLvIpab8XAbSSt",
+      "api-key": "",
     },
     data: data,
   };

@@ -1,22 +1,28 @@
 {
-  "name": "lmia",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "lmia-stats",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "init": "tsc --init",
-    "start": "ts-node index.ts"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "extract-data": "ts-node dataExtractor/index.ts"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "@types/node": "20.3.0",
+    "@types/react": "18.2.11",
+    "@types/react-dom": "18.2.4",
+    "eslint": "8.42.0",
+    "ts-node": "^10.9.1",
+    "prettier": "2.8.8",
     "axios": "^1.4.0",
     "exceljs": "^4.3.0",
-    "sqlite3": "^5.1.6"
-  },
-  "devDependencies": {
-    "prettier": "2.8.8",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "sqlite3": "^5.1.6",
+    "eslint-config-next": "13.4.5",
+    "next": "13.4.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "5.1.3"
   }
 }

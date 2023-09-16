@@ -5,7 +5,6 @@ const Excel = require("exceljs");
 const path = require("path");
 const initMongo = require("./SyncMongo");
 const Asqlite = require("./utils/sql");
-logger.clear();
 
 const IS_CLOUD = false;
 
@@ -240,5 +239,5 @@ const initDB = async () => {
   return db;
 };
 
-downloadENStats();
+// downloadENStats();
 parseData();

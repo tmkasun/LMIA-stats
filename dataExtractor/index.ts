@@ -1,11 +1,16 @@
+import logger from "./utils/logger";
 const { data } = require("./data/meta");
 const { LMIA_DATA_DIR, getDataFiles, downloadFile } = require("./utils");
 const Excel = require("exceljs");
 const path = require("path");
+const initMongo = require("./SyncMongo");
+const Asqlite = require("./utils/sql");
+logger.clear();
 
-import { addEntry } from "./data/mongo";
-import ASqlite3, { Asqlite } from "./utils/sql";
+const IS_CLOUD = false;
+
 const old2017To2021Pattern = /^(20\d\d)(\w\d)/;
+
 const quartersMap: { [key: string]: string } = {
   q1: "March",
   q2: "June",
@@ -16,53 +21,55 @@ const quartersMap: { [key: string]: string } = {
 const downloadENStats = async () => {
   let enResources = 0;
   for (const resource of data.result.resources) {
-    const { name, url } = resource;
-    if (resource.language.length === 1 && resource.language.includes("en")) {
+    const { name, url, language } = resource;
+    if (language.length === 1 && language.includes("en")) {
       enResources += 1;
       const latests = name.split(",").pop();
       const fileExtension = url.split(".").pop();
       let [from, to] = latests.split(" to ");
+      // If `to` is available it's a New kind of LMIA record
       if (to) {
         const year = to.split(" ").pop();
         from = `${from} ${year}`.trim();
-        console.log(`${from} => ${to}`);
+        logger.info(`${from} => ${to}`);
         const fileName = `${to}.${fileExtension}`.replaceAll(" ", "-");
         try {
           await downloadFile(url, path.join(LMIA_DATA_DIR, fileName));
         } catch (error) {
-          console.error(`Error downloading ${fileName}`);
+          logger.error(`Error downloading ${fileName}`);
         }
         await new Promise((r) => setTimeout(() => r(null), 1000));
       } else {
-        const a = name.split("-");
-        const b = name.match(/20\d\d/);
         const [, year, quarter] = old2017To2021Pattern.exec(name) || [];
         if (quarter) {
           const qString = quartersMap[quarter.toLocaleLowerCase()];
-          const fileName = `${qString} ${year}.${fileExtension}`.replaceAll(" ", "-");
+          const fileName = `${qString} ${year}.${fileExtension}`.replaceAll(
+            " ",
+            "-"
+          );
           try {
             await downloadFile(url, path.join(LMIA_DATA_DIR, fileName));
           } catch (error) {
-            console.error(`Error downloading ${fileName}`);
+            logger.error(`Error downloading ${fileName}`);
           }
         }
-        debugger;
       }
     } else {
-      console.log(resource.language.join(","));
+      logger.info(resource.language.join(","));
     }
   }
-  console.log(enResources);
+  logger.info(enResources);
 };
 
 const parseData = async () => {
   const dataFiles = await getDataFiles();
   const db = await initDB();
+  let grandTotalValidData = 0;
   for (const dataFile of dataFiles) {
     const filePath = path.join(LMIA_DATA_DIR, dataFile);
     const [fileName, fileExtension] = dataFile.split(".");
 
-    console.log(`### Reading ${dataFile} ###`);
+    logger.info(`### Reading ${dataFile} ###`);
     const workbook = new Excel.Workbook();
     const isCSV = fileExtension.toLocaleLowerCase() === "csv";
     try {
@@ -72,21 +79,30 @@ const parseData = async () => {
         await workbook.xlsx.readFile(filePath);
       }
     } catch (error) {
-      console.log(`Failed ${dataFile}`);
+      logger.info(`Failed ${dataFile}`);
       continue;
     }
     const [worksheet] = workbook.worksheets;
-    let totalData = 0;
     const totalRows = worksheet.rowCount;
+    let totalData = 0;
     let batchCount = 0;
+    let noDataRows = 0;
+    let mongoErrors = 0;
+    const mongoTasks: any[] = [];
     let batch: any = [];
     worksheet.eachRow(async (row: any) => {
       batchCount += 1;
-      if (row.cellCount <= 2 || (!row.getCell(2).value && !row.getCell(3).value)) {
-        console.warn(`None data row!`);
+      if (
+        row.cellCount <= 2 ||
+        (!row.getCell(2).value && !row.getCell(3).value)
+      ) {
+        noDataRows += 1;
+        // logger.warn(`None data row!`);
       } else {
         const cells: (string | number)[] = row._cells.map((c: any) =>
-          typeof c.value === "string" ? c.value.trim().replace(/\'/g, "''") : c.value
+          typeof c.value === "string"
+            ? c.value.trim().replace(/\'/g, "''")
+            : c.value
         );
         let [
           province,
@@ -99,8 +115,12 @@ const parseData = async () => {
           approvedPositions,
         ] = cells;
 
-        approvedLMIAs = approvedLMIAs !== undefined ? parseInt(approvedLMIAs as string) : -1;
-        approvedPositions = approvedPositions !== undefined ? parseInt(approvedPositions as string) : -1;
+        approvedLMIAs =
+          approvedLMIAs !== undefined ? parseInt(approvedLMIAs as string) : -1;
+        approvedPositions =
+          approvedPositions !== undefined
+            ? parseInt(approvedPositions as string)
+            : -1;
         // For old LMIA stats
         const oldSchema = cells.length == 6;
         if (oldSchema) {
@@ -108,63 +128,102 @@ const parseData = async () => {
           incorporateStatus = "";
         }
         if (address === "Address") {
-          console.warn(`Suspicious data row => ${cells.join("<=>")}`);
+          logger.warn(`Suspicious data row => ${cells.join("<=>")}`);
           return;
         }
-        // batch.push({
-        //   province,
-        //   programStream,
-        //   employer,
-        //   address,
-        //   occupation,
-        //   incorporateStatus,
-        //   approvedLMIAs,
-        //   approvedPositions,
-        //   time: fileName,
-        // });
-        // if (batchCount % 10 === 0) {
-        //   const res = await addEntry(batch);
-        //   batch = [];
-        // }
-        await db.run(
-          `
-                    INSERT OR IGNORE INTO ${Asqlite.TABLE_NAME}
-                        (
-                            province,
-                            programStream,
-                            employer,
-                            address,
-                            occupation,
-                            incorporateStatus,
-                            approvedLMIAs,
-                            approvedPositions,
-                            time
-                            )
-                        VALUES(
-                            '${province}',
-                            '${programStream}',
-                            '${employer}',
-                            '${address}',
-                            '${occupation}',
-                            '${incorporateStatus}',
-                            ${approvedLMIAs},
-                            ${approvedPositions},
-                            '${fileName}'
-                             );
-                    `
-        );
+        if (IS_CLOUD) {
+          const currentRecord = {
+            province,
+            programStream,
+            employer,
+            address,
+            occupation,
+            incorporateStatus,
+            approvedLMIAs,
+            approvedPositions,
+            time: fileName,
+          };
+          // batch.push(currentRecord);
+          try {
+            mongoTasks.push(db.insertOne(currentRecord));
+            // logger.info(
+            //   `${insertManyResult.insertedCount} documents successfully inserted.\n`
+            // );
+          } catch (err) {
+            mongoErrors += 1;
+            logger.error(
+              `Something went wrong trying to insert the new documents: ${err}\n`
+            );
+          }
+        }
+        if (batchCount % 100 === 0) {
+          logger.info(`Processing batch ${batchCount} . . .`);
+          if (false && IS_CLOUD) {
+            try {
+              const insertManyResult = await db.insertMany(batch);
+              debugger;
+              logger.info(
+                `${insertManyResult.insertedCount} documents successfully inserted.\n`
+              );
+            } catch (err) {
+              debugger;
+              logger.error(
+                `Something went wrong trying to insert the new documents: ${err}\n`
+              );
+            } finally {
+              batch = [];
+            }
+          }
+        }
+        if (!IS_CLOUD) {
+          await db.run(
+            `
+                      INSERT OR IGNORE INTO ${Asqlite.TABLE_NAME}
+                          (
+                              province,
+                              programStream,
+                              employer,
+                              address,
+                              occupation,
+                              incorporateStatus,
+                              approvedLMIAs,
+                              approvedPositions,
+                              time
+                              )
+                          VALUES(
+                              '${province}',
+                              '${programStream}',
+                              '${employer}',
+                              '${address}',
+                              '${occupation}',
+                              '${incorporateStatus}',
+                              ${approvedLMIAs},
+                              ${approvedPositions},
+                              '${fileName}'
+                               );
+                      `
+          );
+        }
         totalData += 1;
       }
     });
-    console.log(`### End reading ${dataFile} ###`);
-    console.log(`Total processed data = ${totalData}`);
+    await Promise.allSettled(mongoTasks);
+    logger.info(`### End reading ${dataFile} ###`);
+    logger.info(`Total processed data = ${totalData}
+    Total No Data Rows =  ${noDataRows}
+    Total Mongo Errors = ${mongoErrors}
+    `);
+    grandTotalValidData += totalData;
   }
-  console.log(`Closing DB!`);
+  logger.info(`Closing DB!`);
   await db.close();
 };
 
 const initDB = async () => {
-  const db = await ASqlite3.open(path.join("data", "allLMIAs.sql"));
+  if (IS_CLOUD) {
+    return initMongo();
+  }
+  const db = await Asqlite.open(path.join("data", "allLMIAs.sql"));
   await db.run(`
     CREATE TABLE IF NOT EXISTS ${Asqlite.TABLE_NAME} (
         province TEXT NOT NULL,

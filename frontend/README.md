@@ -1,5 +1,4 @@
 
-tt
 # Canada PR Statistics
 
 [Visit](https://canpr.knnect.com/)

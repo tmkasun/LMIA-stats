@@ -54,9 +54,6 @@ export default function Table(props: ITable) {
                                 </svg></a>
                             </div>
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                            <span className="sr-only">Edit</span>
-                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,9 +84,6 @@ export default function Table(props: ITable) {
                             <td className="px-6 py-4">
                                 {lmia.approvedPositions}
                             </td>
-                            <td className="px-6 py-4 text-right">
-                                <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                            </td>
                         </tr>
                     ))}
                     {
@@ -113,9 +107,7 @@ export default function Table(props: ITable) {
                                 <td className="px-6 py-4">
                                     <div className="animate-pulse mt-4 w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
                                 </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="animate-pulse mt-4 w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-                                </td>
+
                             </tr>
                         ))
                         )}

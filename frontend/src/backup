@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.main-grid {
+  display: grid;
+
+  grid-template-rows: 1fr 3fr;
+  grid-template-columns: 1fr 2fr 3fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+}
+
+.main-graph {
+  grid-row-start: 2;
+  grid-column-start: 1;
+
+  grid-row-end: 3;
+  grid-column-end: 4;
+}
+
+.controls {
+  grid-row-start: 1;
+  grid-column-start: 1;
+
+  grid-row-end: 2;
+  grid-column-end: 2;
+}
+
+.draw-stats {
+  grid-row-start: 1;
+  grid-column-start: 2;
+
+  grid-row-end: 2;
+  grid-column-end: 3;
+}
+
+.last-draw-data {
+  grid-row-start: 1;
+  grid-column-start: 3;
+
+  grid-row-end: 2;
+  grid-column-end: 4;
+}
+
+.statsPanel {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+}
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.statsPanel div {
+  display: flex;
+  align-self: flex-start;
+  justify-self: flex-end;
+  color: gray;
+}
+
+.statsPanel .statValue {
+  justify-self: flex-start;
+  margin-left: 1rem;
+  color: black;
+  font-size: 1.2rem;
+}
+
+.program-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.statsPanel .statValue .hoverToolTip {
+  position: absolute;
+  top: -17px;
+  left: 27px;
+  background: black;
+  border-radius: 8px;
+  padding: 0 3px;
+  color: #d9d6ff;
+  width: 280px;
+}
+
+.highlightGreen {
+  color: green;
+}

@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         const sortByParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "sortby");
         const orderParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "order");
-        const sortBy: Sort = { time: "desc" };
+        let sortBy: Sort = { time: "desc" };
         if (sortByParam) {
             let order: SortDirection = -1;
             if (orderParam) {
@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 }
                 order = orderParam[1] as SortDirection;
             }
-            sortBy[sortByParam[1] as string] = order;
+            sortBy = { [sortByParam[1] as string]: order };
         }
         const searchCursor = await collection.find(searchQuery);
         const totalCount = await searchCursor.count();

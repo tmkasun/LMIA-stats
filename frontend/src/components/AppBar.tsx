@@ -25,13 +25,13 @@ export default function AppBar({ children }: { children?: React.ReactNode }) {
   const { pathname } = location;
   return (
     <div
-      className={"p-2 font-semibold border shadow rounded-2xl flex h-20 justify-between w-full items-center text-black"}
+      className={"p-2 font-semibold border shadow rounded-t-none rounded-2xl flex h-20 justify-between w-full items-center text-black"}
     >
       <Link className="flex justify-center items-center overflow-hidden h-16" href="/">
         <img className="overflow-hidden -ml-10" src="/images/HD-wordmark-white.gif" width={250} />{" "}
         <h1 className="-ml-10 flex font-serif font-light justify-end items-end h-full mb-3 text-4xl ">LMIAs</h1>
       </Link>
-      <div className="flex gap-x-10 flex-row">
+      <div className="hidden sm:visible sm:flex gap-x-10 flex-row">
         <Link href="/" className={`${pathname === "/" && "border-b-2   border-blue-600"} p-3`}>
           Approved
         </Link>
@@ -44,7 +44,7 @@ export default function AppBar({ children }: { children?: React.ReactNode }) {
       </div>
       {children}
 
-      <div className="flex gap-x-8 justify-center items-center">
+      <div className="hidden sm:visible sm:flex gap-x-8 justify-center items-center">
         <button
           onClick={() => alert("Coming soon!")}
           className="border-b-2  shadow-red-100 hover:shadow-md hover:bg-red-300 hover:border-red-400 shadow-sm rounded-lg bg-red-200 border-red-300 p-4"

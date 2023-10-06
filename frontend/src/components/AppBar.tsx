@@ -25,7 +25,7 @@ export default function AppBar({ children }: { children?: React.ReactNode }) {
   const { pathname } = location;
   return (
     <div
-      className={"p-2 font-semibold border shadow rounded-t-none rounded-2xl flex h-20 justify-between w-full items-center text-black"}
+      className={"p-2 font-semibold border dark:bg-white shadow rounded-t-none rounded-2xl flex h-20 justify-between w-full items-center text-black"}
     >
       <Link className="flex justify-center items-center overflow-hidden h-16" href="/">
         <img className="overflow-hidden -ml-10" src="/images/HD-wordmark-white.gif" width={250} />{" "}

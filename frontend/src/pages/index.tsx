@@ -105,8 +105,8 @@ const MainPage = () => {
                 <AppBar />
                 <Search placeholder="Employer Name" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} endAdornment={(<span>{data?.pagination?.total} Total</span>)} />
                 <div className="flex flex-col sm:flex-row w-full grow gap-4">
-                    <div className="py-4 px-2 flex sm:shrink-0 flex-col gap-6 rounded-2xl border border-gray-100 bg-gray-50 sm:w-72">
-                        <h2 className="text-gray-950 text-xl font-semibold leading-6">Filters</h2>
+                    <div className="py-4 px-2 flex sm:shrink-0 flex-col gap-6 rounded-2xl border border-gray-100 dark:bg-gray-700 dark:text-gray-50 bg-gray-50 sm:w-72">
+                        <h2 className="text-gray-950 text-xl dark:text-gray-50 font-semibold leading-6">Filters</h2>
                         <Selector value={province} data={provinces} label='Province' onChange={(newProvince) => { setProvince(newProvince.key); }} />
                         <Selector searchable data={occupations} label='Occupation' onChange={(newOccupation) => setOccupation(newOccupation.key)} />
                         <Selector value={programStream} data={programStreams} label='Program Stream' onChange={(newProgramStream) => { setProgramStream(newProgramStream.key); }} />

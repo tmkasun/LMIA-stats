@@ -44,9 +44,9 @@ export default function Selector(props: ISelector) {
     return (
         <div className="flex justify-center items-center gap-x-2 ">
             <div ref={dropdownListRef} className="relative grow w-3/4">
-                <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); setIsOpen(true); }} type="button" className="relative cursor-pointer w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label">
+                <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); setIsOpen(true); }} type="button" className="relative dark:bg-slate-600 cursor-pointer w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label">
                     <span className="flex items-center">
-                        <span className="block truncate text-[#020618] font-semibold leading-5">{currentField?.name || label}</span>
+                        <span className="block truncate text-[#020618] dark:text-gray-50 font-semibold leading-5">{currentField?.name || label}</span>
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                         <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

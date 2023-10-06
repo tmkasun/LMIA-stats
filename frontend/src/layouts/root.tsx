@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`grow flex flex-col mx-1 sm:mx-6 mb-4 ${figtree.className}`}>{children}
+  return <div className={`grow flex flex-col mx-1 sm:mx-6 pb-4 ${figtree.className}`}>{children}
   </div>;
 }

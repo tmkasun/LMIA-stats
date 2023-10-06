@@ -5,18 +5,26 @@ import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getLMIAs } from "~/apis/lmia";
 import AppBar from "~/components/AppBar";
+import Chip from "~/components/Chip";
 import Search from "~/components/Search";
 import Selector from "~/components/Selector";
 import Table from "~/components/Table";
-import { LMIAResponseData } from "~/types/api";
+import { occupations, programStreams, provinces } from "~/data/filters";
+import { ILMIA, LMIAResponseData } from "~/types/api";
 import { useDebounce } from "~/utils/utils";
 
-export interface ISearch {
-    employer?: string
+export interface ISearch extends ILMIA {
+    sortBy?: string
+    order?: number
 }
 
 const MainPage = () => {
     const [searchInput, setSearchInput] = useState("");
+    const [sortBy, setSortBy] = useState("");
+    const [occupation, setOccupation] = useState("");
+    const [sortOrder, setSortOrder] = useState(0);
+    const [province, setProvince] = useState("");
+    const [programStream, setProgramStream] = useState("");
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState<ISearch>({});
     const updateQuery = useCallback((newQuery: ISearch) => {
@@ -33,14 +41,47 @@ const MainPage = () => {
         if (searchInput) {
             newQuery.employer = searchInput;
         }
+        if (programStream) {
+            newQuery.programStream = programStream;
+        }
+        if (province) {
+            newQuery.province = province;
+
+        }
+        if (sortBy) {
+            newQuery.sortBy = sortBy;
+
+        }
+        if (sortOrder) {
+            newQuery.order = sortOrder;
+        }
+
+        if (occupation) {
+            newQuery.occupation = occupation;
+        }
+
         debouncedUpdateQuery(newQuery);
-    }, [searchInput, debouncedUpdateQuery]);
+    }, [searchInput, debouncedUpdateQuery, province, programStream, sortBy, sortOrder, occupation]);
     useEffect(() => {
         if (router.isReady) {
             setSearchInput(router.query?.employer as string || "");
+            setProvince(router.query?.province as string || "");
+            setProgramStream(router.query?.programStream as string || "");
+            setSortBy(router.query?.sortBy as string || "");
+            setOccupation(router.query?.occupation as string || "");
+            setSortOrder(parseInt(router.query?.order as string || "") || 0);
             setSearchQuery(router.query);
         }
     }, [router.isReady]);
+
+    const handleReset = () => {
+        setProgramStream("");
+        setProvince("");
+        setSortBy("");
+        setSortOrder(0);
+        setSearchInput("");
+        setOccupation("");
+    };
     return (
         <>
             <Head>
@@ -52,11 +93,45 @@ const MainPage = () => {
                 <div className="flex w-full grow gap-4">
                     <div className="py-4 px-2 flex shrink-0 flex-col gap-6 rounded-2xl border border-gray-100 bg-gray-50 w-72">
                         <h2 className="text-gray-950 text-xl font-semibold leading-6">Filters</h2>
-                        <Selector data={[{ name: "ontario", key: "ontario" }]} label='Province' onChange={() => { }} />
-                        <Selector data={[{ name: "Software", key: "ontario" }]} label='Occupation' onChange={() => { }} />
-                        <Selector data={[{ name: "GTS", key: "ontario" }]} label='Program Stream' onChange={() => { }} />
+                        <Selector value={province} data={provinces} label='Province' onChange={(newProvince) => { setProvince(newProvince.key); }} />
+                        <Selector searchable data={occupations} label='Occupation' onChange={(newOccupation) => setOccupation(newOccupation.key)} />
+                        <Selector value={programStream} data={programStreams} label='Program Stream' onChange={(newProgramStream) => { setProgramStream(newProgramStream.key); }} />
+                        {(programStream || province || sortBy || occupation) && (<button onClick={handleReset} className="flex justify-center items-center bg-[#443BBC] py-2 px-4 text-white rounded-xl h-[2.5rem]">
+                            Reset
+                        </button>)}
+                        <div className="flex flex-col gap-y-4">
+                            {province && (
+                                <Chip onClose={() => {
+                                    setProvince("");
+                                }}>
+                                    Province: <span className="font-semibold block truncate grow">{province}</span>
+                                </Chip>
+                            )}
+                            {occupation && (
+                                <Chip onClose={() => {
+                                    setOccupation("");
+                                }}>
+                                    Occupation: <span className="font-semibold block truncate grow">{occupation}</span>
+                                </Chip>
+                            )}
+                            {programStream && (
+                                <Chip onClose={() => {
+                                    setProgramStream("");
+                                }}>
+                                    Stream: <span className="font-semibold block truncate grow">{programStream}</span>
+                                </Chip>
+                            )}
+                            {sortBy && (
+                                <Chip onClose={() => {
+                                    setSortBy("");
+                                    setSortOrder(0);
+                                }}>
+                                    Sort By: <span className="font-semibold block truncate grow">{sortBy}</span>
+                                </Chip>
+                            )}
+                        </div>
                     </div>
-                    {!isError && <Table isLoading={isLoading} data={data?.payload} />}
+                    {!isError && <Table onSort={(sort) => { setSortBy(sort); if (sortOrder === -1) { setSortOrder(1); } else { setSortOrder(-1); } }} isLoading={isLoading} data={data?.payload} />}
                     {isError && <h1 className="text-3xl text-red-600">Error!</h1>}
                 </div>
             </div>

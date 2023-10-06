@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React, { useEffect, useRef } from "react";
-export interface ISearch extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface ISearch extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "endAdornment"> {
     endAdornment?: React.ReactNode
 }
 export default function Search(props: ISearch) {

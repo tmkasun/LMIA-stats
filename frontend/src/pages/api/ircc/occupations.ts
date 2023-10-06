@@ -4,21 +4,13 @@ import clientPromise from "~/lib/mongodb";
 import { ILMIA, LMIAResponseData } from "~/types/api";
 
 export const allowedQueryParamsMapping: { [key: string]: keyof ILMIA } = {
-    province: "province",
-    programstream: "programStream",
-    employer: "employer",
     occupation: "occupation",
-    time: "time",
-    approvedlmias: "approvedLMIAs",
-    approvedpositions: "approvedPositions",
-    address: "address",
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<LMIAResponseData>) {
     try {
         const client = await clientPromise;
         const { query } = req;
-
         let limit = 10;
         let searchQuery: { [key: string]: RegExp } = {};
         for (let [key, value] of Object.entries(query)) {
@@ -29,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }
             if (typeof value === "string" && Object.keys(allowedQueryParamsMapping).includes(key.toLowerCase())) {
                 var regex = new RegExp(value, "i");
-                searchQuery[allowedQueryParamsMapping[key.toLowerCase()]] = regex;
+                searchQuery[allowedQueryParamsMapping[key]] = regex;
             }
         }
         const limitParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "limit");
@@ -43,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         if (sortByParam) {
             let order: SortDirection = -1;
             if (orderParam) {
-                if (!["asc", "desc", "-1", "1"].includes((orderParam[1] as string).toLowerCase())) {
+                if (!["asc", "desc"].includes((orderParam[1] as string).toLowerCase())) {
                     throw new Error(`${orderParam[1]} is not valid sort order string, has to be one of 'asc', 'desc', -1, 1`);
                 }
                 order = orderParam[1] as SortDirection;
@@ -52,10 +44,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         }
         const db = client.db("ircc");
         const collection = await db.collection("lmias2");
-        const searchCursor = await collection.find(searchQuery);
-        const totalCount = await searchCursor.count();
-        const data = await collection.find<ILMIA>(searchQuery).sort(sortBy).limit(limit).toArray();
-        res.status(200).json({ payload: data, pagination: { total: totalCount } });
+        const searchCursor = await collection.distinct("occupation", searchQuery);
+        res.status(200).json({ payload: searchCursor, pagination: { total: searchCursor.length } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: `${error}` });

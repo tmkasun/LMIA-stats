@@ -10,11 +10,14 @@ export interface ISelector extends Omit<React.SelectHTMLAttributes<HTMLSelectEle
     data: ISelectData[];
     label: React.ReactNode;
     marked?: string;
+    searchable?: boolean
 }
 
 export default function Selector(props: ISelector) {
     const [isOpen, setIsOpen] = useState(false);
-    const { value, onChange, data = [], label, marked } = props;
+    const [searchInput, setSearchInput] = useState("");
+    const searchRef = useRef<HTMLInputElement | null>(null);
+    const { value, onChange, data = [], label, marked, searchable } = props;
     const dropdownListRef = useRef<HTMLDivElement | null>(null);
     const currentField = data.find((field) => field.key === value);
     useEffect(() => {
@@ -29,6 +32,15 @@ export default function Selector(props: ISelector) {
         };
 
     }, []);
+    let filteredData = data;
+    useEffect(() => {
+        if (searchRef.current && isOpen) {
+            searchRef.current.focus();
+        }
+    }, [isOpen]);
+    if (searchInput) {
+        filteredData = data.filter(({ name }) => name.toLowerCase().includes(searchInput.toLowerCase()));
+    }
     return (
         <div className="flex justify-center items-center gap-x-2 ">
             <div ref={dropdownListRef} className="relative grow w-3/4">
@@ -43,7 +55,10 @@ export default function Selector(props: ISelector) {
                     </span>
                 </button>
                 <ul className={`absolute z-10 mt-1 ${!isOpen && "hidden"} w-full transition ease-in duration-100 max-h-56 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`} tabIndex={-1} role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
-                    {data.map(({ name, key }) => (
+                    {searchable && (
+                        <input ref={searchRef} value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className="text-gray-950 w-full text-sm block p-1 focus:border-blue-500 justify-start items-center rounded-md border border-[#CBD5E1] bg-white" type="search" placeholder="Search" />
+                    )}
+                    {filteredData.map(({ name, key }) => (
                         <li key={key} onClick={() => { onChange({ key, name }); setIsOpen(false); }} className="text-gray-900 flex cursor-pointer hover:bg-gray-50 relative select-none py-2 pl-3 pr-9" id="listbox-option-0" role="option">
 
                             <div className="flex items-center w-full">

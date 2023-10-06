@@ -1,3 +1,5 @@
+import logger from "./utils/logger";
+
 const { MongoClient, ServerApiVersion } = require("mongodb");
 var { password, database: dbName, collection: collectionName } = require("./mongo.configs.json");
 
@@ -52,7 +54,7 @@ export async function initMongo() {
   database = await client.db(dbName);
   database.command({ ping: 1 });
 
-  console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  logger.info("Pinged your deployment. You successfully connected to MongoDB!");
 
   return await database.collection(collectionName);
 }

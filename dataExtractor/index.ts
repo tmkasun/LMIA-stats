@@ -6,7 +6,7 @@ const path = require("path");
 const initMongo = require("./SyncMongo");
 const Asqlite = require("./utils/sql");
 
-const IS_CLOUD = false;
+const IS_CLOUD = true;
 
 const old2017To2021Pattern = /^(20\d\d)(\w\d)/;
 
@@ -140,7 +140,7 @@ const parseData = async () => {
             incorporateStatus,
             approvedLMIAs,
             approvedPositions,
-            time: fileName,
+            time: new Date(fileName),
           };
           // batch.push(currentRecord);
           try {
@@ -157,22 +157,6 @@ const parseData = async () => {
         }
         if (batchCount % 100 === 0) {
           logger.info(`Processing batch ${batchCount} . . .`);
-          if (false && IS_CLOUD) {
-            try {
-              const insertManyResult = await db.insertMany(batch);
-              debugger;
-              logger.info(
-                `${insertManyResult.insertedCount} documents successfully inserted.\n`
-              );
-            } catch (err) {
-              debugger;
-              logger.error(
-                `Something went wrong trying to insert the new documents: ${err}\n`
-              );
-            } finally {
-              batch = [];
-            }
-          }
         }
         if (!IS_CLOUD) {
           await db.run(

@@ -26,7 +26,7 @@ const MainPage = () => {
     const [province, setProvince] = useState("");
     const [programStream, setProgramStream] = useState("");
     const router = useRouter();
-    const [searchQuery, setSearchQuery] = useState<ISearch>({});
+    const [searchQuery, setSearchQuery] = useState<ISearch>({ sortBy, order: sortOrder });
     const updateQuery = useCallback((newQuery: ISearch) => {
         setSearchQuery(newQuery);
         router.query = newQuery as ParsedUrlQuery;
@@ -64,13 +64,27 @@ const MainPage = () => {
     }, [searchInput, debouncedUpdateQuery, province, programStream, sortBy, sortOrder, occupation]);
     useEffect(() => {
         if (router.isReady) {
-            setSearchInput(router.query?.employer as string || "");
-            setProvince(router.query?.province as string || "");
-            setProgramStream(router.query?.programStream as string || "");
-            setSortBy(router.query?.sortBy as string || "");
-            setOccupation(router.query?.occupation as string || "");
-            setSortOrder(parseInt(router.query?.order as string || "") || 0);
-            setSearchQuery(router.query);
+            const { employer, province, programStream, sortBy, occupation, order } = router.query;
+            if (employer) {
+                setSearchInput(employer as string);
+            }
+            if (province) {
+                setProvince(province as string);
+
+            }
+            if (programStream) {
+                setProgramStream(programStream as string);
+            }
+            if (sortBy) {
+                setSortBy(sortBy as string);
+            }
+            if (occupation) {
+                setOccupation(occupation as string);
+
+            }
+            if (order) {
+                setSortOrder(parseInt(order as string || "") || 0);
+            }
         }
     }, [router.isReady]);
 

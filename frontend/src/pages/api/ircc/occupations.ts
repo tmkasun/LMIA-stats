@@ -1,6 +1,6 @@
 import { Sort, SortDirection } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
-import clientPromise from "~/lib/mongodb";
+import clientPromise, { getCollection } from "~/lib/mongodb";
 import { ILMIA, LMIAResponseData } from "~/types/api";
 
 export const allowedQueryParamsMapping: { [key: string]: keyof ILMIA } = {
@@ -9,7 +9,7 @@ export const allowedQueryParamsMapping: { [key: string]: keyof ILMIA } = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<LMIAResponseData>) {
     try {
-        const client = await clientPromise;
+        const collection = await getCollection();
         const { query } = req;
         let limit = 10;
         let searchQuery: { [key: string]: RegExp } = {};
@@ -42,8 +42,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }
             sortBy[sortByParam[1] as string] = order;
         }
-        const db = client.db("ircc");
-        const collection = await db.collection("lmias2");
         const searchCursor = await collection.distinct("occupation", searchQuery);
         res.status(200).json({ payload: searchCursor, pagination: { total: searchCursor.length } });
     } catch (error) {

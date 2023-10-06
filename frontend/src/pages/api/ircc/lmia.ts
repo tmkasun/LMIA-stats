@@ -1,6 +1,6 @@
 import { Sort, SortDirection } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
-import clientPromise from "~/lib/mongodb";
+import { getCollection } from "~/lib/mongodb";
 import { ILMIA, LMIAResponseData } from "~/types/api";
 
 export const allowedQueryParamsMapping: { [key: string]: keyof ILMIA } = {
@@ -16,7 +16,7 @@ export const allowedQueryParamsMapping: { [key: string]: keyof ILMIA } = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<LMIAResponseData>) {
     try {
-        const client = await clientPromise;
+        const collection = await getCollection();
         const { query } = req;
 
         let limit = 10;
@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         const sortByParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "sortby");
         const orderParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "order");
-        const sortBy: Sort = {};
+        const sortBy: Sort = { time: "desc" };
         if (sortByParam) {
             let order: SortDirection = -1;
             if (orderParam) {
@@ -50,8 +50,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }
             sortBy[sortByParam[1] as string] = order;
         }
-        const db = client.db("ircc");
-        const collection = await db.collection("lmias2");
         const searchCursor = await collection.find(searchQuery);
         const totalCount = await searchCursor.count();
         const data = await collection.find<ILMIA>(searchQuery).sort(sortBy).limit(limit).toArray();

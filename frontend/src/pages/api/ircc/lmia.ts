@@ -20,6 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         const { query } = req;
 
         let limit = 10;
+        let page = 0;
         let searchQuery: { [key: string]: RegExp } = {};
         for (let [key, value] of Object.entries(query)) {
             const allowedQueryParams = [...Object.keys(allowedQueryParamsMapping), "limit", "offset", "sortby", "page", "order"];
@@ -32,9 +33,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 searchQuery[allowedQueryParamsMapping[key.toLowerCase()]] = regex;
             }
         }
+
         const limitParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "limit");
         if (limitParam) {
             limit = parseInt(limitParam[1] as string);
+        }
+
+        const pageParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "page");
+        if (pageParam) {
+            page = parseInt(pageParam[1] as string);
         }
 
         const sortByParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "sortby");
@@ -56,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             { "$sort": sortBy },
             {
                 $facet: {
-                    data: [{ $skip: 0 }, { $limit: limit }],
+                    data: [{ $skip: page * 10 }, { $limit: limit }],
                     totalCount: [
                         {
                             $count: "count"
@@ -66,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }
         ]).toArray();
         const [{ data: payload, totalCount }] = data;
-        res.status(200).json({ payload, pagination: { total: totalCount[0].count } });
+        res.status(200).json({ payload, pagination: { total: totalCount.length && totalCount[0].count } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: `${error}` });

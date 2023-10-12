@@ -16,13 +16,16 @@ import { useDebounce } from "~/utils/utils";
 export interface ISearch extends ILMIA {
     sortBy?: string
     order?: number
+    page?: number
 }
 
 const MainPage = () => {
+    const [isPending, setIsPending] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [sortBy, setSortBy] = useState("");
     const [occupation, setOccupation] = useState("");
     const [sortOrder, setSortOrder] = useState(0);
+    const [pageNumber, setPageNumber] = useState(0);
     const [province, setProvince] = useState("");
     const [programStream, setProgramStream] = useState("");
     const router = useRouter();
@@ -34,7 +37,7 @@ const MainPage = () => {
     }, [router]);
     const debouncedUpdateQuery = useDebounce(updateQuery);
 
-    const { data, isError, isLoading } = useQuery<LMIAResponseData>(["getLMIAs", searchQuery], getLMIAs);
+    const { data, isError, isLoading } = useQuery<LMIAResponseData>(["getLMIAs", searchQuery], getLMIAs, { onSettled: () => setIsPending(false) });
 
     useEffect(() => {
         const newQuery: ISearch = {};
@@ -59,9 +62,12 @@ const MainPage = () => {
         if (occupation) {
             newQuery.occupation = occupation;
         }
-
+        if (pageNumber) {
+            newQuery.page = pageNumber;
+        }
+        setIsPending(true);
         debouncedUpdateQuery(newQuery);
-    }, [searchInput, debouncedUpdateQuery, province, programStream, sortBy, sortOrder, occupation]);
+    }, [searchInput, debouncedUpdateQuery, province, programStream, sortBy, sortOrder, occupation, pageNumber]);
     useEffect(() => {
         if (router.isReady) {
             const { employer, province, programStream, sortBy, occupation, order } = router.query;
@@ -95,6 +101,7 @@ const MainPage = () => {
         setSortOrder(0);
         setSearchInput("");
         setOccupation("");
+        setPageNumber(0);
     };
     return (
         <>
@@ -110,7 +117,7 @@ const MainPage = () => {
                         <Selector value={province} data={provinces} label='Province' onChange={(newProvince) => { setProvince(newProvince.key); }} />
                         <Selector searchable data={occupations} label='Occupation' onChange={(newOccupation) => setOccupation(newOccupation.key)} />
                         <Selector value={programStream} data={programStreams} label='Program Stream' onChange={(newProgramStream) => { setProgramStream(newProgramStream.key); }} />
-                        {(programStream || province || sortBy || occupation) && (<button onClick={handleReset} className="flex justify-center items-center bg-[#443BBC] py-2 px-4 text-white rounded-xl h-[2.5rem]">
+                        {(programStream || province || sortBy || occupation || pageNumber !== 0) && (<button onClick={handleReset} className="flex justify-center items-center bg-[#443BBC] py-2 px-4 text-white rounded-xl h-[2.5rem]">
                             Reset
                         </button>)}
                         <div className="flex flex-col gap-y-4">
@@ -145,7 +152,13 @@ const MainPage = () => {
                             )}
                         </div>
                     </div>
-                    {!isError && <Table onSort={(sort) => { setSortBy(sort); if (sortOrder === -1) { setSortOrder(1); } else { setSortOrder(-1); } }} isLoading={isLoading} data={data?.payload} />}
+                    {!isError && <Table
+                        isPending={isPending}
+                        page={pageNumber}
+                        onNext={() => { setPageNumber((p) => p + 1); }}
+                        onPrevious={() => { setPageNumber((p) => p - 1); }}
+                        onSort={(sort) => { setSortBy(sort); if (sortOrder === -1) { setSortOrder(1); } else { setSortOrder(-1); } }}
+                        isLoading={isLoading} data={data} />}
                     {isError && <h1 className="text-3xl text-red-600">Error!</h1>}
                 </div>
             </div>

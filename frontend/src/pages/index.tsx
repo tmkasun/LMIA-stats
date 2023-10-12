@@ -26,7 +26,7 @@ const MainPage = () => {
     const [province, setProvince] = useState("");
     const [programStream, setProgramStream] = useState("");
     const router = useRouter();
-    const [searchQuery, setSearchQuery] = useState<ISearch>({ sortBy, order: sortOrder });
+    const [searchQuery, setSearchQuery] = useState<ISearch>({});
     const updateQuery = useCallback((newQuery: ISearch) => {
         setSearchQuery(newQuery);
         router.query = newQuery as ParsedUrlQuery;

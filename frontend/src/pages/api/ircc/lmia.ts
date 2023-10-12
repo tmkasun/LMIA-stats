@@ -39,21 +39,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         const sortByParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "sortby");
         const orderParam = Object.entries(query).find(([k, v]) => k.toLowerCase() === "order");
-        let sortBy: Sort = { time: "desc" };
+        let sortBy: Sort = { "time": -1 };
         if (sortByParam) {
             let order: SortDirection = -1;
             if (orderParam) {
-                if (!["asc", "desc", "-1", "1"].includes((orderParam[1] as string).toLowerCase())) {
-                    throw new Error(`${orderParam[1]} is not valid sort order string, has to be one of 'asc', 'desc', -1, 1`);
+                const [, orderDirection] = orderParam;
+                if (!["asc", "desc", "-1", "1"].includes((orderDirection as string).toLowerCase())) {
+                    throw new Error(`${orderDirection} is not valid sort order string, has to be one of 'asc', 'desc', -1, 1`);
                 }
-                order = orderParam[1] as SortDirection;
+                order = parseInt(orderDirection as string) as SortDirection;
             }
             sortBy = { [sortByParam[1] as string]: order };
         }
-        const searchCursor = await collection.find(searchQuery);
-        const totalCount = await searchCursor.count();
-        const data = await collection.find<ILMIA>(searchQuery).sort(sortBy).limit(limit).toArray();
-        res.status(200).json({ payload: data, pagination: { total: totalCount } });
+        const data = await collection.aggregate<{ data: ILMIA[], totalCount: [{ count: number }] }>([
+            { "$match": searchQuery },
+            { "$sort": sortBy },
+            {
+                $facet: {
+                    data: [{ $skip: 0 }, { $limit: limit }],
+                    totalCount: [
+                        {
+                            $count: "count"
+                        }
+                    ]
+                }
+            }
+        ]).toArray();
+        const [{ data: payload, totalCount }] = data;
+        res.status(200).json({ payload, pagination: { total: totalCount[0].count } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: `${error}` });

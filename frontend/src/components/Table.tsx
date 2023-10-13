@@ -14,12 +14,16 @@ export default function Table(props: ITable) {
     const { data, isLoading, onSort, onNext, onPrevious, page = 0, isPending } = props;
     const { payload: records } = data || {};
     return (
-        <div className="flex gap-4 flex-col grow">
+        <div className="flex gap-4 flex-col grow relative">
             <div className="relative overflow-x-auto grow w-full dark:shadow-slate-600 shadow-md sm:rounded-lg">
-                <table className={`${isPending && "animate-pulse"} w-full text-sm h-full text-left text-gray-500 dark:text-gray-400`}>
+                {isPending && (<>
+                    <span className="ease absolute left-0 -top-1 h-0 border-t-4 rounded-lg shadow-md border-gray-200 origin-left-right w-full animate-progress"></span>
+                    <span className="ease absolute left-0 bottom-0 h-0 border-t-4 rounded-lg shadow-md border-gray-200 origin-left-right w-full animate-progress"></span>
+                </>)}
+                <table className={"w-full text-sm h-full text-left text-gray-500 dark:text-gray-400"}>
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" className="px-6 py-3">
+                            <th scope="col" className="px-6 py-3 capitalize">
                                 Employer name
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -31,12 +35,12 @@ export default function Table(props: ITable) {
                                 </button>
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                <div className="flex items-center">
+                                <div className="flex items-center capitalize">
                                     Program Stream
                                 </div>
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                <div className="flex items-center">
+                                <div className="flex items-center capitalize">
                                     Occupation
                                 </div>
                             </th>
@@ -89,7 +93,7 @@ export default function Table(props: ITable) {
                             </tr>
                         ))}
                         {
-                            isLoading && (new Array(5).fill(null).map((_, i) => (
+                            isLoading && (new Array(10).fill(null).map((_, i) => (
                                 <tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         <div className="animate-pulse h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-40 mb-2.5"></div>

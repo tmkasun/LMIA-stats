@@ -74,7 +74,7 @@ export default function Table(props: ITable) {
                             </tr>
                         )}
                         {!isLoading && records && records.map((lmia) => (
-                            <tr key={lmia._id} className={`${lmia.isNegative ? "border-red-500 bg-red-100" : "bg-white"} border-b dark:bg-gray-800 dark:border-gray-700`}>
+                            <tr key={lmia._id} className={`${lmia.isNegative ? "border-red-500 bg-red-100 dark:border-red-800 dark:bg-red-950 dark:bg-opacity-50" : "bg-white"} border-b dark:bg-gray-800 dark:border-gray-700`}>
                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {lmia.employer}
                                 </th>
@@ -95,7 +95,7 @@ export default function Table(props: ITable) {
                                         {lmia.approvedPositions}
                                         {lmia.isNegative && (
                                             <ToolTip message="Negative LMIA!">
-                                                <svg className="w-6 h-6 text-red-600 cursor-help dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                <svg className="w-6 h-6 text-red-600 cursor-help dark:text-red-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                 </svg>
                                             </ToolTip>

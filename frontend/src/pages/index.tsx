@@ -122,13 +122,13 @@ const MainPage = () => {
                         <Selector value={province} data={provinces} label='Province' onChange={(newProvince) => { setProvince(newProvince.key); }} />
                         <Selector searchable data={occupations} label='Occupation' onChange={(newOccupation) => setOccupation(newOccupation.key)} />
                         <Selector value={programStream} data={programStreams} label='Program Stream' onChange={(newProgramStream) => { setProgramStream(newProgramStream.key); }} />
-                        <div className="flex justify-start gap-4">
+                        <div className="flex justify-start gap-4 border border-gray-50 p-1 rounded-md">
                             <input id="is-negative-check" onChange={(e) => setIsNegative(e.target.checked)} className="p-4 scale-125 ml-1" type="checkbox" name="isnegative" checked={isNegative} />
-                            <label htmlFor="is-negative-check">
+                            <label htmlFor="is-negative-check" className="cursor-pointer">
                                 Show Only Negative
                             </label>
                         </div>
-                        {(programStream || province || sortBy || occupation || pageNumber !== 0 || isNegative) && (<button onClick={handleReset} className="flex justify-center items-center bg-[#443BBC] py-2 px-4 text-white rounded-xl h-[2.5rem]">
+                        {(programStream || province || sortBy || occupation || pageNumber !== 0 || isNegative) && (<button onClick={handleReset} className="flex justify-center items-center dark:bg-blue-400 bg-[#443BBC] py-2 px-4 text-white rounded-xl h-[2.5rem]">
                             Reset
                         </button>)}
                         <div className="flex flex-col gap-y-4">

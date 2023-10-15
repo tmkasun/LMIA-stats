@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { ILMIA, LMIAResponseData } from "~/types/api";
+import { ToolTip } from "./Tooltip";
 
 export interface ITable {
     data?: LMIAResponseData
@@ -15,11 +16,13 @@ export default function Table(props: ITable) {
     const { payload: records } = data || {};
     return (
         <div className="flex gap-4 flex-col grow relative">
+            {isPending && (
+                <span className="ease absolute left-0 -top-1 h-0 border-t-2 rounded-lg border-blue-400 origin-left-right w-full animate-progress"></span>
+            )}
             <div className="relative overflow-x-auto grow w-full dark:shadow-slate-600 shadow-md sm:rounded-lg">
-                {isPending && (<>
-                    <span className="ease absolute left-0 -top-1 h-0 border-t-4 rounded-lg shadow-md border-gray-200 origin-left-right w-full animate-progress"></span>
-                    <span className="ease absolute left-0 bottom-0 h-0 border-t-4 rounded-lg shadow-md border-gray-200 origin-left-right w-full animate-progress"></span>
-                </>)}
+                {isPending && (
+                    <span className="ease absolute left-0 bottom-0 h-0 border-t-2 rounded-lg shadow-md border-blue-400 origin-left-right w-full animate-progress"></span>
+                )}
                 <table className={"w-full text-sm h-full text-left text-gray-500 dark:text-gray-400"}>
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -71,7 +74,7 @@ export default function Table(props: ITable) {
                             </tr>
                         )}
                         {!isLoading && records && records.map((lmia) => (
-                            <tr key={lmia._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                            <tr key={lmia._id} className={`${lmia.isNegative ? "border-red-500 bg-red-100" : "bg-white"} border-b dark:bg-gray-800 dark:border-gray-700`}>
                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {lmia.employer}
                                 </th>
@@ -87,8 +90,18 @@ export default function Table(props: ITable) {
                                 <td className="px-6 py-4">
                                     {dayjs(lmia.time).format("MMMM-YYYY")}
                                 </td>
-                                <td className="px-6 py-4">
-                                    {lmia.approvedPositions}
+                                <td className="px-6 py-4 ">
+                                    <div className="flex justify-between">
+                                        {lmia.approvedPositions}
+                                        {lmia.isNegative && (
+                                            <ToolTip message="Negative LMIA!">
+                                                <svg className="w-6 h-6 text-red-600 cursor-help dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg>
+                                            </ToolTip>
+                                        )}
+                                    </div>
+
                                 </td>
                             </tr>
                         ))}
@@ -126,14 +139,14 @@ export default function Table(props: ITable) {
                 </span>
                 {page > 0 && (<button disabled={isLoading} onClick={() => onPrevious && onPrevious()} className="flex items-center justify-center px-3 h-8 mr-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                     <svg className="w-3.5 h-3.5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4" />
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="2" d="M13 5H1m0 0 4 4M1 5l4-4" />
                     </svg>
                     Previous
                 </button>)}
                 {(page + 1) * 10 < data?.pagination?.total && (<button disabled={isLoading} onClick={() => onNext && onNext()} className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                     Next
                     <svg className="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
                     </svg>
                 </button>)}
             </div>)}

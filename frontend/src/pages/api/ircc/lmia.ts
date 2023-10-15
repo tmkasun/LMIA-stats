@@ -5,6 +5,7 @@ import { ILMIA, LMIAResponseData } from "~/types/api";
 
 export const allowedQueryParamsMapping: { [key: string]: keyof ILMIA } = {
     province: "province",
+    isnegative: "isNegative",
     programstream: "programStream",
     employer: "employer",
     occupation: "occupation",
@@ -21,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         let limit = 10;
         let page = 0;
-        let searchQuery: { [key: string]: RegExp } = {};
+        let searchQuery: { [key: string]: RegExp | boolean } = {};
         for (let [key, value] of Object.entries(query)) {
             const allowedQueryParams = [...Object.keys(allowedQueryParamsMapping), "limit", "offset", "sortby", "page", "order"];
             if (!allowedQueryParams.includes(key.toLowerCase())) {
@@ -29,8 +30,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 return;
             }
             if (typeof value === "string" && Object.keys(allowedQueryParamsMapping).includes(key.toLowerCase())) {
-                var regex = new RegExp(value, "i");
-                searchQuery[allowedQueryParamsMapping[key.toLowerCase()]] = regex;
+                if (key.toLowerCase() === "isnegative") {
+                    if (value.toLowerCase() === "true") {
+                        searchQuery[allowedQueryParamsMapping[key.toLowerCase()]] = true;
+                    }
+                } else {
+                    var regex = new RegExp(value, "i");
+                    searchQuery[allowedQueryParamsMapping[key.toLowerCase()]] = regex;
+                }
             }
         }
 

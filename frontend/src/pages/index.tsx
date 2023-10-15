@@ -23,6 +23,7 @@ const MainPage = () => {
     const [isPending, setIsPending] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [sortBy, setSortBy] = useState("");
+    const [isNegative, setIsNegative] = useState(false);
     const [occupation, setOccupation] = useState("");
     const [sortOrder, setSortOrder] = useState(0);
     const [pageNumber, setPageNumber] = useState(0);
@@ -65,9 +66,12 @@ const MainPage = () => {
         if (pageNumber) {
             newQuery.page = pageNumber;
         }
+        if (isNegative) {
+            newQuery.isNegative = isNegative;
+        }
         setIsPending(true);
         debouncedUpdateQuery(newQuery);
-    }, [searchInput, debouncedUpdateQuery, province, programStream, sortBy, sortOrder, occupation, pageNumber]);
+    }, [searchInput, debouncedUpdateQuery, province, programStream, sortBy, sortOrder, occupation, pageNumber, isNegative]);
     useEffect(() => {
         if (router.isReady) {
             const { employer, province, programStream, sortBy, occupation, order } = router.query;
@@ -102,6 +106,7 @@ const MainPage = () => {
         setSearchInput("");
         setOccupation("");
         setPageNumber(0);
+        setIsNegative(false);
     };
     return (
         <>
@@ -110,14 +115,20 @@ const MainPage = () => {
             </Head>
             <div className="flex flex-col justify-start items-center grow gap-y-4">
                 <AppBar />
-                <Search placeholder="Employer Name" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} endAdornment={(<span>{data?.pagination?.total} Total</span>)} />
+                <Search placeholder="Employer Name" value={searchInput} onChange={(e) => { setSearchInput(e.target.value); setPageNumber(0); }} endAdornment={(<span>{data?.pagination?.total} Total</span>)} />
                 <div className="flex flex-col sm:flex-row w-full grow gap-4">
                     <div className="py-4 px-2 flex sm:shrink-0 flex-col gap-6 rounded-2xl border border-gray-100 dark:bg-gray-700 dark:text-gray-50 bg-gray-50 sm:w-72">
                         <h2 className="text-gray-950 text-xl dark:text-gray-50 font-semibold leading-6">Filters</h2>
                         <Selector value={province} data={provinces} label='Province' onChange={(newProvince) => { setProvince(newProvince.key); }} />
                         <Selector searchable data={occupations} label='Occupation' onChange={(newOccupation) => setOccupation(newOccupation.key)} />
                         <Selector value={programStream} data={programStreams} label='Program Stream' onChange={(newProgramStream) => { setProgramStream(newProgramStream.key); }} />
-                        {(programStream || province || sortBy || occupation || pageNumber !== 0) && (<button onClick={handleReset} className="flex justify-center items-center bg-[#443BBC] py-2 px-4 text-white rounded-xl h-[2.5rem]">
+                        <div className="flex justify-start gap-4">
+                            <input id="is-negative-check" onChange={(e) => setIsNegative(e.target.checked)} className="p-4 scale-125 ml-1" type="checkbox" name="isnegative" checked={isNegative} />
+                            <label htmlFor="is-negative-check">
+                                Show Only Negative
+                            </label>
+                        </div>
+                        {(programStream || province || sortBy || occupation || pageNumber !== 0 || isNegative) && (<button onClick={handleReset} className="flex justify-center items-center bg-[#443BBC] py-2 px-4 text-white rounded-xl h-[2.5rem]">
                             Reset
                         </button>)}
                         <div className="flex flex-col gap-y-4">

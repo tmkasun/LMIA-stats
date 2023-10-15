@@ -21,7 +21,7 @@ export default function AppBar({ children }: { children?: React.ReactNode }) {
       </div>
       <div className="hidden sm:visible sm:flex gap-x-10 flex-row">
         <Link href="/" className={`${pathname === "/" && "border-b-2   border-blue-600"} p-3`}>
-          Approved
+          LMIA
         </Link>
         <Link href="/none-compliant" className={` ${pathname === "/none-compliant" && "border-b-2   border-blue-600"}  p-3`}>
           None Compliant Companies{" "}

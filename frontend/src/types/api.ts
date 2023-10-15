@@ -10,6 +10,7 @@ export interface ILMIA {
     approvedLMIAs?: number;
     approvedPositions?: number;
     time?: string;
+    isNegative?: boolean;
 }
 
 export type LMIAResponseData = {

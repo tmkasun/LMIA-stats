@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === "development") {
 // separate module, the client can be shared across functions.
 export default clientPromise;
 
-export const getCollection = async (collectionName = "lmias3") => {
+export const getCollection = async (collectionName = "lmia") => {
   const client = await clientPromise;
   const db = await client.db("ircc");
   const collection = await db.collection(collectionName);

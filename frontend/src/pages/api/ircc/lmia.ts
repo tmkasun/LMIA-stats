@@ -68,7 +68,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         const data = await collection.aggregate<{ data: ILMIA[], totalCount: [{ count: number }] }>([
             { "$match": searchQuery },
             { "$sort": sortBy },
-            {allowDiskUse: true },
             {
                 $facet: {
                     data: [{ $skip: page * 10 }, { $limit: limit }],
@@ -79,7 +78,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                     ]
                 }
             }
-        ]).toArray();
+        ],
+            { allowDiskUse: true },
+        ).toArray();
         const [{ data: payload, totalCount }] = data;
         res.status(200).json({ payload, pagination: { total: totalCount.length && totalCount[0].count } });
     } catch (error) {

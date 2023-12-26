@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import { response } from './data/mock.response';
 

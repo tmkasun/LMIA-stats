@@ -80,7 +80,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }
         ],
             { allowDiskUse: true },
-        ).allowDiskUse(true).toArray();
+        ).toArray();
         const [{ data: payload, totalCount }] = data;
         res.status(200).json({ payload, pagination: { total: totalCount.length && totalCount[0].count } });
     } catch (error) {

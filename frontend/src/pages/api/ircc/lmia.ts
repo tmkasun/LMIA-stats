@@ -68,6 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         const data = await collection.aggregate<{ data: ILMIA[], totalCount: [{ count: number }] }>([
             { "$match": searchQuery },
             { "$sort": sortBy },
+            {allowDiskUse: true },
             {
                 $facet: {
                     data: [{ $skip: page * 10 }, { $limit: limit }],

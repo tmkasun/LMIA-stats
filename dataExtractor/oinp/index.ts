@@ -40,8 +40,16 @@ const cheerioz = (async () => {
     debugger
 })
 
+const printSorted = (sortedDraws: string[]) => {
+    let i = 0;
+    for (let draw of sortedDraws) {
+        logger.info(`i = ${i} ${draw}`);
+        i++
+    }
+}
 const pup = async () => {
     const draws = new Set();
+    const drawsMap: { [key: string]: string } = {};
     const browser = await puppeteer.launch({ headless: true });
 
     // Open a new tab
@@ -52,24 +60,27 @@ const pup = async () => {
     await page.goto(pUpdates2023, { waitUntil: 'networkidle2' });
     const element = await page.$$('h3');
     await Promise.all(element?.map(async (foo) => {
-        const value = await foo.evaluate(el => el.textContent);
+        let value = await foo.evaluate(el => el.textContent) as string;
+        value = value.trim();
         const prev = await page.evaluateHandle(el => el.previousElementSibling, foo);
         const next = await page.evaluateHandle(el => el.nextElementSibling, foo);
         // const value2 = await prev.evaluate(el => el.textContent);
-        // const fff = await (await prev.getProperty('innerHTML')).jsonValue()
-        const xxx = await (await next.getProperty('innerHTML')).jsonValue()
+        // const fff = await (await prev.getProperty('innerHTML')).jsonValue();
+        const xxx = await (await next.getProperty('innerHTML')).jsonValue() as string;
+
         debugger
-        draws.add(value);
+        if (!draws.has(value)) {
+            draws.add(value);
+            drawsMap[value] = xxx
+        }
     }))
     const sortedDraws = Array.from(draws).map((draw, i) => {
         logger.info(`i = ${i} => ${draw}`)
         return new Date(draw as string)
     }).sort((a: any, b: any) => b - a);
-    let i =0;
-    for (let draw of sortedDraws) {
-        logger.info(`i = ${i} ${draw}`);
-        i++
-    }
+    let i = 0;
+    // printSorted(sortedDraws);
+
     debugger
 }
 

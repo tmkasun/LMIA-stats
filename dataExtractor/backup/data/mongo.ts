@@ -2,7 +2,7 @@ var axios = require("axios");
 
 export async function addEntry(batch: any) {
   const data = JSON.stringify({
-    collection: "lmia",
+    collection: "lmias",
     database: "ircc",
     dataSource: "ircc",
     documents: batch,

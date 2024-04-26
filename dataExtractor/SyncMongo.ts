@@ -1,9 +1,15 @@
 import logger from "./utils/logger";
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
-var { password, database: dbName, collection: collectionName } = require("./mongo.configs.json");
+var {
+  username,
+  password,
+  database: dbName,
+  collection: collectionName,
+  server,
+} = require("./mongo.configs.json");
 
-const uri = `mongodb+srv://nodeuser:${password}@ircc.3wwmdgf.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb://${username}:${password}@${server}/IRCC?directConnection=true`;
 
 const test = async () => {
   let database;
@@ -22,15 +28,21 @@ const test = async () => {
     database = await client.db(dbName);
     database.command({ ping: 1 });
 
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
 
     const collection = await database.collection(collectionName);
     try {
       const insertManyResult = await collection.insertOne({ wola: "testing" });
       debugger;
-      console.log(`${insertManyResult.insertedCount} documents successfully inserted.\n`);
+      console.log(
+        `${insertManyResult.insertedCount} documents successfully inserted.\n`
+      );
     } catch (err) {
-      console.error(`Something went wrong trying to insert the new documents: ${err}\n`);
+      console.error(
+        `Something went wrong trying to insert the new documents: ${err}\n`
+      );
     }
   } finally {
     // Ensures that the client will close when you finish/error
@@ -39,13 +51,7 @@ const test = async () => {
 };
 
 export async function initMongo() {
-  const client = new MongoClient(uri, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    },
-  });
+  const client = new MongoClient(uri);
   let database;
   // Connect the client to the server	(optional starting in v4.7)
   await client.connect();
@@ -55,7 +61,6 @@ export async function initMongo() {
   database.command({ ping: 1 });
 
   logger.info("Pinged your deployment. You successfully connected to MongoDB!");
-
   return await database.collection(collectionName);
 }
 

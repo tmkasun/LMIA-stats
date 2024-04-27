@@ -42,11 +42,11 @@ const getDataFiles = async (dir = LMIA_DATA_DIR) => {
   return files;
 };
 const getNegativeMetaDataJSON = async () => {
-  // const res = await axios('https://open.canada.ca/data/api/action/package_show?id=f82f66f2-a22b-4511-bccf-e1d74db39ae5');
-  // return res.data;
+  const res = await axios('https://open.canada.ca/data/api/action/package_show?id=f82f66f2-a22b-4511-bccf-e1d74db39ae5');
+  return res.data;
 
-  logger.error("Using mock negative LMIA data");
-  return mockNegative;
+  // logger.error("Using mock negative LMIA data");
+  // return mockNegative;
 };
 module.exports = {
   LMIA_DATA_DIR,

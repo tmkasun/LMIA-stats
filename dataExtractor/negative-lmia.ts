@@ -1,6 +1,6 @@
 import logger from "./utils/logger";
 const { data } = require("./data/meta");
-const { NEGATIVE_LMIA_DATA_DIR, getDataFiles, getMetaDataJSON, downloadFile } = require("./utils");
+const { NEGATIVE_LMIA_DATA_DIR, getDataFiles, getNegativeMetaDataJSON, downloadFile } = require("./utils");
 const Excel = require("exceljs");
 var XLSX = require("xlsx");
 const path = require("path");
@@ -21,7 +21,7 @@ const quartersMap: { [key: string]: string } = {
 
 const downloadENStats = async () => {
   let enResources = 0;
-  const data = await getMetaDataJSON();
+  const data = await getNegativeMetaDataJSON();
   let total = 0;
   let matched = 0;
   for (const resource of data.result.resources) {

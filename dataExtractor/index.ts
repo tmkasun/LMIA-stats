@@ -1,6 +1,5 @@
 import logger from "./utils/logger";
-const { data } = require("./data/meta");
-const { LMIA_DATA_DIR, getDataFiles, downloadFile } = require("./utils");
+const { LMIA_DATA_DIR, getDataFiles, downloadFile, getLMIAMetaJSON } = require("./utils");
 const Excel = require("exceljs");
 const path = require("path");
 const initMongo = require("./SyncMongo");
@@ -19,7 +18,8 @@ const quartersMap: { [key: string]: string } = {
 
 const downloadENStats = async () => {
   let enResources = 0;
-  for (const resource of data.result.resources) {
+  const metaData = await getLMIAMetaJSON();
+  for (const resource of metaData.resources) {
     const { name, url, language } = resource;
     if (language.length === 1 && language.includes("en")) {
       enResources += 1;
@@ -199,6 +199,7 @@ const parseData = async () => {
     grandTotalValidData += totalData;
   }
   logger.info(`Closing DB!`);
+  // TODO:Check error db.close is not a function
   await db.close();
 };
 

@@ -1,6 +1,6 @@
 import { QueryFunctionContext } from "react-query";
 import { ISearch } from "~/pages";
-import { ILMIA, LMIAResponseData } from "~/types/api";
+import { ILMIA, LMIAMetaData, LMIAResponseData } from "~/types/api";
 import { API_BASE_PATH } from "~/utils/utils";
 
 export const getLMIAs = async (context: QueryFunctionContext): Promise<LMIAResponseData> => {
@@ -17,3 +17,13 @@ export const getLMIAs = async (context: QueryFunctionContext): Promise<LMIARespo
     }
 };
 
+export const getMetaData = async (context: QueryFunctionContext): Promise<any> => {
+    const apiEndpoint = `${API_BASE_PATH}/ircc/metadata`;
+    const response = await fetch(apiEndpoint);
+    if (response.ok) {
+        const responseData = await response.json() as LMIAMetaData;
+        return responseData;
+    } else {
+        throw new Error("Error while fetching the data");
+    }
+}

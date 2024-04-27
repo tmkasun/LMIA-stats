@@ -7,8 +7,8 @@ import Footer from "~/components/Footer";
 const figtree = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Canada PR Stats",
-  description: "Visualize Canadian PR statistics using the live IRCC data API.",
+  title: "Canada LMIA Stats",
+  description: "Visualize Canadian LMIA statistics using the historical stats Canada data.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

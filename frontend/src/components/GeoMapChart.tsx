@@ -34,6 +34,19 @@ const canJson = canJSON as any;
 const projection = geoAlbers();
 echarts.registerMap("Canada", canJson);
 
+const colors = [
+  "#FFFF00", // Bright yellow (low density)
+  "#FFC400",
+  "#FFA200",
+  "#FF7000",
+  "#FF5000",
+  "#FF3000",
+  "#FF0000", // Bright red (medium-high density)
+  "#E60000",
+  "#C60000",
+  "#800000", // Dark red (very high density)
+];
+
 interface IGeoMapChart {
   data: any;
   isLoading: boolean;
@@ -91,26 +104,14 @@ const GeoMapChart = (props: IGeoMapChart) => {
           min: sortedData[0].value,
           max: sortedData[sortedData.length - 1].value,
           inRange: {
-            color: [
-              "#313695",
-              "#4575b4",
-              "#74add1",
-              "#abd9e9",
-              "#e0f3f8",
-              "#ffffbf",
-              "#fee090",
-              "#fdae61",
-              "#f46d43",
-              "#d73027",
-              "#a50026",
-            ],
+            color: colors,
           },
           text: ["High", "Low"],
           calculable: true,
         },
         series: [
           {
-            name: "Positive LMIAs",
+            name: "Approved positions",
             type: "map",
             map: "Canada",
             projection: {

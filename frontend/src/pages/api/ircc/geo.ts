@@ -4,7 +4,6 @@ import clientPromise, { getCollection } from "~/lib/mongodb";
 import { ILMIA, LMIAResponseData } from "~/types/api";
 import { allowedQueryParamsMapping } from "./lmia";
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     const collection = await getCollection();
@@ -73,7 +72,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
     const resultsCursor = await collection.aggregate([
       { $match: searchQuery },
-      { $group: { _id: "$province", count: { $sum: 1 } } },
+      { $group: { _id: "$province", count: { $sum: { $add: "$approvedPositions" } } } },
     ]);
     const results = (await resultsCursor.toArray()).map((doc) => ({ province: doc._id, count: doc.count }));
     res.status(200).json({ payload: results, pagination: { total: results.length } });

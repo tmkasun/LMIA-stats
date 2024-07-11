@@ -13,6 +13,12 @@ export const clearAndParseNumber = (numberInString: string) => {
   }
   return parsedNumber;
 };
+/**
+ *
+ * @param isMocked
+ * @returns
+ * @deprecated Use react query instead
+ */
 export const useIRCCData = (isMocked = false) => {
   const [data, setData] = useState<null | IIRCCData>(null);
   const [isLoading, setIsLoading] = useState(false);

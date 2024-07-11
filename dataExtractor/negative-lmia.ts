@@ -273,7 +273,7 @@ const initDB = async () => {
   return db;
 };
 
-// downloadENStats();
+downloadENStats();
 parseData();
 
 

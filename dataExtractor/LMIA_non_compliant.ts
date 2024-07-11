@@ -18,5 +18,4 @@ import { response } from './data/mock.response';
         }
         allRecords.push(data);
     }
-    debugger
 })()

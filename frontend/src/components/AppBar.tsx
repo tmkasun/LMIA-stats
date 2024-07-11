@@ -23,8 +23,8 @@ export default function AppBar({ children }: { children?: React.ReactNode }) {
         <Link href="/" className={`${pathname === "/" && "border-b-2   border-blue-600"} p-3`}>
           LMIA
         </Link>
-        <Link href="/none-compliant" className={` ${pathname === "/none-compliant" && "border-b-2   border-blue-600"}  p-3`}>
-          None Compliant Companies{" "}
+        <Link href="/visualization" className={` ${pathname === "/visualization" && "border-b-2   border-blue-600"}  p-3`}>
+          Visualization{" "}
         </Link>
         <Link href="https://canpr.knnect.com/" className={` ${pathname === "/pnp" && "border-b-2   border-blue-600"}  p-3 flex justify-center items-center gap-x-1`}>
           PR Stats <IconExternalLink />

@@ -1,5 +1,10 @@
 import logger from "./utils/logger";
-const { LMIA_DATA_DIR, getDataFiles, downloadFile, getLMIAMetaJSON } = require("./utils");
+const {
+  LMIA_DATA_DIR,
+  getDataFiles,
+  downloadFile,
+  getLMIAMetaJSON,
+} = require("./utils");
 const Excel = require("exceljs");
 const path = require("path");
 const initMongo = require("./SyncMongo");
@@ -60,8 +65,13 @@ const downloadENStats = async () => {
   logger.info(enResources);
 };
 
-const parseData = async () => {
-  const dataFiles = await getDataFiles();
+const parseData = async (specificQuarter: null | string = null) => {
+  let dataFiles;
+  if (specificQuarter) {
+    dataFiles = [specificQuarter];
+  } else {
+    dataFiles = await getDataFiles();
+  }
   const db = await initDB();
   let grandTotalValidData = 0;
   for (const dataFile of dataFiles) {

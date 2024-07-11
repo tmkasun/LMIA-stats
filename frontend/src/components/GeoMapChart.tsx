@@ -36,6 +36,7 @@ echarts.registerMap("Canada", canJson);
 
 interface IGeoMapChart {
   data: any;
+  isLoading: boolean;
 }
 
 const CANADIAN_PROVINCES = [
@@ -55,7 +56,16 @@ const CANADIAN_PROVINCES = [
 ];
 
 const GeoMapChart = (props: IGeoMapChart) => {
-  const { data } = props;
+  const { data, isLoading } = props;
+  useEffect(() => {
+    if (chartInstRef.current) {
+      if (isLoading) {
+        chartInstRef.current.showLoading();
+      } else {
+        chartInstRef.current.hideLoading();
+      }
+    }
+  }, [isLoading]);
   useEffect(() => {
     if (chartInstRef.current && data) {
       const geoData = data.payload
@@ -121,6 +131,7 @@ const GeoMapChart = (props: IGeoMapChart) => {
         ],
       };
       chartInstRef.current.setOption(option, true);
+      chartInstRef.current.hideLoading();
     }
   }, [data]);
   const chartDivRef = useRef<HTMLDivElement | null>(null);
@@ -128,10 +139,9 @@ const GeoMapChart = (props: IGeoMapChart) => {
 
   useEffect(() => {
     if (chartDivRef.current) {
-      const barChart = echarts.getInstanceByDom(chartDivRef.current) || echarts.init(chartDivRef.current);
-      // barChart.showLoading();
-      barChart.hideLoading();
-      chartInstRef.current = barChart as unknown as EChartsType;
+      const geoChart = echarts.getInstanceByDom(chartDivRef.current) || echarts.init(chartDivRef.current);
+      geoChart.showLoading();
+      chartInstRef.current = geoChart as unknown as EChartsType;
     }
   }, []);
   return <div id={"foo"} ref={chartDivRef} style={{ width: "90vw", height: "80vh" }} />;

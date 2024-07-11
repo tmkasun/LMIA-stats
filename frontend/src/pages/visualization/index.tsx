@@ -28,14 +28,17 @@ const MainPage = () => {
   const debouncedUpdateQuery = useDebounce(updateQuery);
 
   const {
-    data: metaData,
-    isError: isMetaDataError,
-    isLoading: isMetaDataLoading,
+    data: geoData,
+    isError: isGeoDataError,
+    isLoading: isGeoDataLoading,
   } = useQuery(["getGeoData", searchQuery], getGeoStats);
   const { province, programStream, occupation, isNegative, quarter, UI } = useFilters({
     sortBy: "",
     sortOrder: 0,
     pageNumber: 0,
+    hide: {
+      province: true,
+    },
   });
 
   useEffect(() => {
@@ -69,7 +72,7 @@ const MainPage = () => {
         <AppBar />
         <div className="flex flex-col flex flex-col sm:flex-row w-full grow gap-4">
           {UI}
-          <GeoMapChart data={metaData} />
+          <GeoMapChart isLoading={isGeoDataLoading} data={geoData} />
         </div>
       </div>
     </>

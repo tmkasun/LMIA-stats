@@ -7,8 +7,9 @@ import Chip from "./Chip";
 import { useQuery } from "react-query";
 import { LMIAMetaData } from "~/types/api";
 import { getMetaData } from "~/apis/lmiaFE";
+import { ToolTip } from "./Tooltip";
 
-export const useFilters = ({ sortBy, sortOrder, pageNumber }: any) => {
+export const useFilters = ({ sortBy, hide, pageNumber }: any) => {
   const [isNegative, setIsNegative] = useState(false);
   const [occupation, setOccupation] = useState("");
   const [province, setProvince] = useState("");
@@ -57,17 +58,21 @@ export const useFilters = ({ sortBy, sortOrder, pageNumber }: any) => {
     setQuarter(null);
   };
 
+  const hideProvince = hide?.province || false;
+
   const UI = (
     <div className="py-4 px-2 flex sm:shrink-0 flex-col gap-6 rounded-2xl border border-gray-100 dark:bg-gray-700 dark:text-gray-50 bg-gray-50 sm:w-72">
       <h2 className="text-gray-950 text-xl dark:text-gray-50 font-semibold leading-6">Filters</h2>
-      <Selector
-        value={province}
-        data={provinces}
-        label="Province"
-        onChange={(newProvince) => {
-          setProvince(newProvince.key);
-        }}
-      />
+      {!hideProvince && (
+        <Selector
+          value={province}
+          data={provinces}
+          label="Province"
+          onChange={(newProvince) => {
+            setProvince(newProvince.key);
+          }}
+        />
+      )}
       <Selector
         searchable
         data={occupations}
@@ -85,7 +90,7 @@ export const useFilters = ({ sortBy, sortOrder, pageNumber }: any) => {
       <Selector
         value={quarter?.key}
         data={quarters || []}
-        label="Year"
+        label="Quarter"
         onChange={(newYear) => {
           setQuarter(newYear);
         }}
@@ -128,6 +133,23 @@ export const useFilters = ({ sortBy, sortOrder, pageNumber }: any) => {
             }}
           >
             Occupation: <span className="font-semibold block truncate grow">{occupation}</span>
+            <ToolTip message={occupation}>
+              <svg
+                className="w-4 h-4  cursor-help "
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            </ToolTip>
           </Chip>
         )}
         {programStream && (
@@ -142,8 +164,8 @@ export const useFilters = ({ sortBy, sortOrder, pageNumber }: any) => {
         {sortBy && (
           <Chip
             onClose={() => {
-            //   setSortBy("");
-            //   setSortOrder(0);
+              //   setSortBy("");
+              //   setSortOrder(0);
             }}
           >
             Sort By: <span className="font-semibold block truncate grow">{sortBy}</span>

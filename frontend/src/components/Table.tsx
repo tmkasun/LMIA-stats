@@ -96,7 +96,7 @@ export default function Table(props: ITable) {
                         </tr>
                     </thead>
                     <tbody>
-                        {records && records.length === 0 && (
+                        {!isLoading && records && records.length === 0 && (
                             <tr className="w-full">
                                 <td className="flex w-full justify-center items-center bg-red-200" colSpan={4}>
                                     <h2 className="text-4xl">No results!</h2>
@@ -208,8 +208,8 @@ export default function Table(props: ITable) {
                             >
                                 <path
                                     stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                     strokeWidth="2"
                                     d="M13 5H1m0 0 4 4M1 5l4-4"
                                 />

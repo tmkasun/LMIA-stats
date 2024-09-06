@@ -164,7 +164,7 @@ const LMIAStatisticsDashboard = () => {
                 <h2 className="text-xl font-bold  text-center mb-4">
                     {employer}
                     <p className="text-lg text-gray-700 font-semibold">
-                        Total Positions {data?.payload.totalStats[0].totalPositions}
+                        Total Positions {data?.payload.totalStats[0]?.totalPositions}
                     </p>
                 </h2>
 

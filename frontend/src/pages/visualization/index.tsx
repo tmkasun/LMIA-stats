@@ -14,69 +14,69 @@ import { useDebounce } from "~/utils/utils";
 dayjs.extend(customParseFormat);
 
 const MainPage = () => {
-  const [searchQuery, setSearchQuery] = useState<ISearch>({});
-  const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState<ISearch>({});
+    const router = useRouter();
 
-  const updateQuery = useCallback(
-    (newQuery: ISearch) => {
-      setSearchQuery(newQuery);
-      router.query = newQuery as ParsedUrlQuery;
-      router.push(router);
-    },
-    [router],
-  );
-  const debouncedUpdateQuery = useDebounce(updateQuery);
+    const updateQuery = useCallback(
+        (newQuery: ISearch) => {
+            setSearchQuery(newQuery);
+            router.query = newQuery as ParsedUrlQuery;
+            router.push(router);
+        },
+        [router],
+    );
+    const debouncedUpdateQuery = useDebounce(updateQuery);
 
-  const {
-    data: geoData,
-    isError: isGeoDataError,
-    isLoading: isGeoDataLoading,
-  } = useQuery(["getGeoData", searchQuery], getGeoStats);
-  const { province, programStream, occupation, isNegative, quarter, UI } = useFilters({
-    sortBy: "",
-    sortOrder: 0,
-    pageNumber: 0,
-    hide: {
-      province: true,
-    },
-  });
+    const {
+        data: geoData,
+        isError: isGeoDataError,
+        isLoading: isGeoDataLoading,
+    } = useQuery(["getGeoData", searchQuery], getGeoStats);
+    const { province, programStream, occupation, isNegative, quarter, UI } = useFilters({
+        sortBy: "",
+        sortOrder: 0,
+        pageNumber: 0,
+        hide: {
+            province: true,
+        },
+    });
 
-  useEffect(() => {
-    const newQuery: ISearch = {};
+    useEffect(() => {
+        const newQuery: ISearch = {};
 
-    if (programStream) {
-      newQuery.programStream = programStream;
-    }
-    if (province) {
-      newQuery.province = province;
-    }
+        if (programStream) {
+            newQuery.programStream = programStream;
+        }
+        if (province) {
+            newQuery.province = province;
+        }
 
-    if (occupation) {
-      newQuery.occupation = occupation;
-    }
+        if (occupation) {
+            newQuery.occupation = occupation;
+        }
 
-    if (isNegative) {
-      newQuery.isNegative = isNegative;
-    }
-    if (quarter) {
-      newQuery.quarter = quarter.key;
-    }
-    debouncedUpdateQuery(newQuery);
-  }, [debouncedUpdateQuery, province, programStream, occupation, isNegative, quarter]);
-  return (
-    <>
-      <Head>
-        <title>Canada PR Statistics</title>
-      </Head>
-      <div className="flex flex-col justify-start items-center grow gap-y-4">
-        <AppBar />
-        <div className="flex flex-col flex flex-col sm:flex-row w-full grow gap-4">
-          {UI}
-          <GeoMapChart isLoading={isGeoDataLoading} data={geoData} />
-        </div>
-      </div>
-    </>
-  );
+        if (isNegative) {
+            newQuery.isNegative = isNegative;
+        }
+        if (quarter) {
+            newQuery.quarter = quarter.key;
+        }
+        debouncedUpdateQuery(newQuery);
+    }, [debouncedUpdateQuery, province, programStream, occupation, isNegative, quarter]);
+    return (
+        <>
+            <Head>
+                <title>Canada PR Statistics</title>
+            </Head>
+            <div className="flex flex-col justify-start items-center grow gap-y-4">
+                <AppBar />
+                <div className="flex flex-col flex flex-col sm:flex-row w-full grow gap-4">
+                    {UI}
+                    <GeoMapChart isLoading={isGeoDataLoading} data={geoData} />
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default MainPage;

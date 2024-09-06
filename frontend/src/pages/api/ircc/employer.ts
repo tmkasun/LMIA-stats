@@ -29,8 +29,7 @@ export default async function handler(
                 return;
             }
             if (typeof value === "string" && Object.keys(allowedQueryParamsMapping).includes(key.toLowerCase())) {
-                var regex = new RegExp(value, "i");
-                searchQuery[allowedQueryParamsMapping[key.toLowerCase()]] = regex;
+                searchQuery[allowedQueryParamsMapping[key.toLowerCase()]] = value;
             }
         }
 

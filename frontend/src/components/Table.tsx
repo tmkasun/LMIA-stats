@@ -105,6 +105,7 @@ export default function Table(props: ITable) {
                         )}
                         {!isLoading &&
                             records &&
+                            records.map &&
                             records?.map((lmia) => (
                                 <tr
                                     key={lmia._id}
@@ -114,7 +115,7 @@ export default function Table(props: ITable) {
                                             : "bg-white"
                                     } border-b dark:bg-gray-800 dark:border-gray-700`}
                                 >
-                                    <Link href={`/employer/${lmia.employer}`}>
+                                    <Link href={`/employer/${encodeURIComponent(lmia.employer || "")}`}>
                                         <th
                                             scope="row"
                                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"

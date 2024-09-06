@@ -40,7 +40,7 @@ const LMIAStatisticsDashboard = () => {
     const chartDOMRefs = useRef<{ [key: string]: HTMLDivElement | null }>({}); // Refs for the chart DOM elements
     const { employer } = router.query;
     const { data, isError, isLoading } = useQuery<IEmployerStatsResponse>(
-        ["getLMIAs", { name: employer }],
+        ["getEmployerStats", { name: employer }],
         getEmployerStats,
     );
     useEffect(() => {

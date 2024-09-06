@@ -41,3 +41,17 @@ export const getGeoStats = async (context: QueryFunctionContext): Promise<any> =
     throw new Error("Error while fetching the data");
   }
 };
+
+export const getEmployerStats = async (context: QueryFunctionContext): Promise<any> => {
+  const { queryKey } = context;
+  const [, payload] = queryKey;
+  const queryParams = new URLSearchParams(payload as any);
+  const apiEndpoint = `${API_BASE_PATH}/ircc/employer?${queryParams}`;
+  const response = await fetch(apiEndpoint);
+  if (response.ok) {
+    const responseData = (await response.json()) as any;
+    return responseData;
+  } else {
+    throw new Error("Error while fetching the data");
+  }
+};

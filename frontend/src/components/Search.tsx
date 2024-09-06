@@ -5,7 +5,8 @@ export interface ISearch extends Omit<React.InputHTMLAttributes<HTMLInputElement
 }
 export default function Search(props: ISearch) {
     const searchInputRef = useRef<HTMLInputElement | null>(null);
-    const { value, onChange, endAdornment } = props;
+    const { value, onChange } = props;
+    const {endAdornment, ...inputProps} = props;
     useEffect(() => {
         // Auto focus the search input when loading the main/marketplace page
         if (searchInputRef.current) {
@@ -22,7 +23,7 @@ export default function Search(props: ISearch) {
                     className="w-full h-auto"
                 />
             </div>
-            <input onChange={onChange} value={value} ref={searchInputRef} placeholder="Search" type="text" role="search" {...props} className="text-gray-950 dark:text-gray-50 dark:bg-slate-600 w-full sm:w-[44rem] text-lg leading-5 block p-5 focus:border-blue-500 pl-12 justify-between items-center rounded-2xl border border-[#CBD5E1] bg-white" />
+            <input onChange={onChange} value={value} ref={searchInputRef} placeholder="Search" type="text" role="search" {...inputProps} className="text-gray-950 dark:text-gray-50 dark:bg-slate-600 w-full sm:w-[44rem] text-lg leading-5 block p-5 focus:border-blue-500 pl-12 justify-between items-center rounded-2xl border border-[#CBD5E1] bg-white" />
             {endAdornment && (
                 <div className="text-[#94A5B9] text-lg leading-6 absolute right-2.5 bottom-2.5 px-4 py-2 ">
                     {endAdornment}

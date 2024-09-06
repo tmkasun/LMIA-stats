@@ -141,8 +141,9 @@ const LMIAStatisticsDashboard = () => {
         };
     }, [employer, data]);
 
-    const handleBack = () => {
-        // setSelectedEmployer(null);
+    const handleGoBack = (e: any) => {
+        e.preventDefault();
+        router.back();
     };
 
     return (
@@ -155,18 +156,20 @@ const LMIAStatisticsDashboard = () => {
             </div>
             <div className="p-4 space-y-4 bg-gray-100 min-h-screen rounded-2xl">
                 <div className="flex justify-between items-center mb-4">
-                    {/* Back to main page */}
-                    <Link className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition" href="/">
+                    <Link
+                        className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+                        onClick={handleGoBack}
+                        href="#"
+                    >
                         Back
                     </Link>
+                    <h2 className="text-xl self-center justify-self-center text-end font-bold  text-center mb-4">
+                        {employer}
+                        <p className="text-lg text-gray-700 font-semibold">
+                            Total Positions {data?.payload.totalStats[0]?.totalPositions}
+                        </p>
+                    </h2>
                 </div>
-
-                <h2 className="text-xl font-bold  text-center mb-4">
-                    {employer}
-                    <p className="text-lg text-gray-700 font-semibold">
-                        Total Positions {data?.payload.totalStats[0]?.totalPositions}
-                    </p>
-                </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-white p-4 rounded-lg shadow relative">

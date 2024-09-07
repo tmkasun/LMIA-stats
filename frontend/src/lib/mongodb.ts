@@ -34,7 +34,7 @@ export default clientPromise;
 
 export const getCollection = async (collectionName = "LMIA") => {
   const client = await clientPromise;
-  const db = await client.db("IRCC");
+  const db = await client.db("canada");
   const collection = await db.collection(collectionName);
   return collection;
 };

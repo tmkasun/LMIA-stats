@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts/core";
 import { BarChart, PieChart } from "echarts/charts";
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from "echarts/components";
@@ -6,11 +6,16 @@ import { CanvasRenderer } from "echarts/renderers";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import AppBar from "~/components/AppBar";
-import Search from "~/components/Search";
 import { getEmployerStats } from "~/apis/lmiaFE";
 import { useQuery } from "react-query";
 import { IByAddress, IByProvince, IByQuarter, IEmployerStatsResponse } from "~/types/employerStats";
 import Link from "next/link";
+import "leaflet/dist/leaflet.css";
+import dynamic from 'next/dynamic';
+
+const EmployerMap = dynamic(() => import('~/components/EmployerMap'), {
+  ssr: false,
+});
 
 echarts.use([TitleComponent, TooltipComponent, LegendComponent, GridComponent, BarChart, PieChart, CanvasRenderer]);
 const LoadingAnimation = () => (
@@ -203,26 +208,7 @@ const LMIAStatisticsDashboard = () => {
                         {isLoading && <LoadingAnimation />}
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow relative">
-                        {isLoading ? (
-                            <LoadingAnimation />
-                        ) : (
-                            <table className="w-full block overflow-auto">
-                                <thead>
-                                    <tr>
-                                        <th>Address</th>
-                                        <th className="text-center">Total Positions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {data?.payload.byAddress.map((item: IByAddress) => (
-                                        <tr key={item._id}>
-                                            <td>{item._id}</td>
-                                            <td className="text-center">{item.totalPositions}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
+                        {isLoading ? <LoadingAnimation /> : <EmployerMap addresses={data?.payload.byAddress} />}
                     </div>
                 </div>
             </div>

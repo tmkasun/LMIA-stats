@@ -15,6 +15,11 @@ export interface IByAddress {
     _id: string
     totalLMIAs: number
     totalPositions: number
+    geolocation: {
+        lat: number
+        lon: number
+        name: string
+    }
 }
 
 export interface IByProvince {
@@ -50,3 +55,15 @@ export interface Pagination {
 export type IEmployerStatsRequest = {
     name: string;
 };
+
+export type IGeoLocation = {
+    _id?: {
+        "$oid": string
+    },
+    POSTAL_CODE: string
+    CITY: string
+    PROVINCE_ABBR: string
+    TIME_ZONE: number
+    LATITUDE: number
+    LONGITUDE: number
+}

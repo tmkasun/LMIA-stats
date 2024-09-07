@@ -7,16 +7,17 @@ import { QueryClient, QueryClientProvider } from "react-query";
 const queryClient = new QueryClient();
 
 const CanPR: AppType = ({ Component, pageProps: { ...pageProps } }) => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Layout>
-        <Head>
-          <link rel="shortcut icon" href="https://open.canada.ca/GCWeb/assets/favicon.ico" />
-        </Head>
-        <Component {...pageProps} />
-      </Layout>
-    </QueryClientProvider>
-  );
+    return (
+        <QueryClientProvider client={queryClient}>
+            <Layout>
+                <Head>
+                    <link rel="shortcut icon" href="https://open.canada.ca/GCWeb/assets/favicon.ico" />
+                    <link rel="stylesheet" href="https://unpkg.com/react-leaflet-markercluster/dist/styles.min.css" />
+                </Head>
+                <Component {...pageProps} />
+            </Layout>
+        </QueryClientProvider>
+    );
 };
 
 export default CanPR;

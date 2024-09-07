@@ -11,10 +11,10 @@ import { useQuery } from "react-query";
 import { IByAddress, IByProvince, IByQuarter, IEmployerStatsResponse } from "~/types/employerStats";
 import Link from "next/link";
 import "leaflet/dist/leaflet.css";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const EmployerMap = dynamic(() => import('~/components/EmployerMap'), {
-  ssr: false,
+const EmployerMap = dynamic(() => import("~/components/EmployerMap"), {
+    ssr: false,
 });
 
 echarts.use([TitleComponent, TooltipComponent, LegendComponent, GridComponent, BarChart, PieChart, CanvasRenderer]);

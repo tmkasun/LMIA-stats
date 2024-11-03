@@ -12,7 +12,6 @@ const CanPR: AppType = ({ Component, pageProps: { ...pageProps } }) => {
             <Layout>
                 <Head>
                     <link rel="shortcut icon" href="https://open.canada.ca/GCWeb/assets/favicon.ico" />
-                    <link rel="stylesheet" href="https://unpkg.com/react-leaflet-markercluster/dist/styles.min.css" />
                 </Head>
                 <Component {...pageProps} />
             </Layout>

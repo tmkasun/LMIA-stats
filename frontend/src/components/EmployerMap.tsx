@@ -1,5 +1,6 @@
 import L, { LatLngTuple } from "leaflet";
 import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import { IByAddress } from "~/types/employerStats";
 interface IEmployerMap {
     addresses?: IByAddress[];
@@ -16,10 +17,12 @@ const searchedLocationMarker = new LT.icon({
 
 export const EmployerMap = (props: IEmployerMap) => {
     const { addresses } = props;
-    if (!addresses) return null;
+    if (!addresses) return "No addresses found";
+    const firstAddress = addresses[0];
+    if (!firstAddress) return "First address is missing";
     const center = [addresses[0].geolocation?.lat, addresses[0].geolocation?.lon] as LatLngTuple;
     return (
-        <MapContainer zoomControl={false} style={{ height: "100%" }} center={center} zoom={8} scrollWheelZoom>
+        <MapContainer tap={false} zoomControl={false} className="h-96" center={center} zoom={8} scrollWheelZoom>
             {/* <ChangeView center={mapCenter} zoom={zoom} /> */}
             <TileLayer
                 url="https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}"

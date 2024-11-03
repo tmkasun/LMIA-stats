@@ -10,7 +10,6 @@ import { getEmployerStats } from "~/apis/lmiaFE";
 import { useQuery } from "react-query";
 import { IByAddress, IByProvince, IByQuarter, IEmployerStatsResponse } from "~/types/employerStats";
 import Link from "next/link";
-import "leaflet/dist/leaflet.css";
 import dynamic from "next/dynamic";
 
 const EmployerMap = dynamic(() => import("~/components/EmployerMap"), {
@@ -60,7 +59,7 @@ const LMIAStatisticsDashboard = () => {
             chartRefs.current["nocChart"] = nocChart;
         }
         const options: echarts.EChartsCoreOption = {
-            title: { text: "LMIAs by NOC Code", left: "center" },
+            title: { text: "LMIAs by NOC Code", bottom: "0", left: "center" },
             responsive: true,
             maintainAspectRatio: false,
             tooltip: {
@@ -71,7 +70,7 @@ const LMIAStatisticsDashboard = () => {
                 },
             },
             legend: {
-                orient: "vertical",
+                orient: "horizontal",
                 left: "right",
                 type: "scroll",
                 textStyle: {
@@ -124,7 +123,7 @@ const LMIAStatisticsDashboard = () => {
         const provinceChart =
             chartRefs.current["provinceChart"] || echarts.init(chartDOMRefs.current?.provinceChart as HTMLDivElement);
         provinceChart.setOption({
-            title: { text: "LMIAs by Province", left: "center" },
+            title: { text: "LMIAs by Province", left: true },
             tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
             legend: { left: "right" },
             grid: { left: "3%", right: "4%", bottom: "3%", top: "5%", containLabel: true },
@@ -207,7 +206,7 @@ const LMIAStatisticsDashboard = () => {
                         ></div>
                         {isLoading && <LoadingAnimation />}
                     </div>
-                    <div className="bg-white p-4 rounded-lg shadow relative">
+                    <div className={`bg-white p-4 rounded-lg shadow relative ${isLoading ? "h-96" : ""}`}>
                         {isLoading ? <LoadingAnimation /> : <EmployerMap addresses={data?.payload.byAddress} />}
                     </div>
                 </div>

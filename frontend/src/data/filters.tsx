@@ -88,7 +88,8 @@ export const programStreams = [
     }
 ];
 
-export const occupations = [
+// Deprecated
+export const occupationsTesting = [
     {
         "name": "0012-Senior government managers and officials",
         "key": "0012-Senior government managers and officials"

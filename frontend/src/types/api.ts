@@ -22,4 +22,5 @@ export type LMIAResponseData = {
 
 export type LMIAMetaData = {
   quarters: { year: number; month: number }[];
+  occupations: string[];
 };

@@ -113,12 +113,12 @@ export default function Table(props: ITable) {
                                         lmia.isNegative
                                             ? "border-red-500 bg-red-100 dark:border-red-800 dark:bg-red-950 dark:bg-opacity-50"
                                             : "bg-white"
-                                    } border-b dark:bg-gray-800 dark:border-gray-700`}
+                                    } border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
                                 >
                                     <Link href={`/employer/${encodeURIComponent(lmia.employer || "")}`}>
                                         <th
                                             scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                            className="hover:text-blue-800 dark:hover:text-blue-400 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                         >
                                             {lmia.employer}
                                         </th>

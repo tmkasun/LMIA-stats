@@ -1,20 +1,36 @@
 import Link from "next/link";
 import { ToolTip } from "./Tooltip";
+import { useQuery } from "react-query";
+import { LMIAMetaData } from "~/types/api";
+import { getMetaData } from "~/apis/lmiaFE";
 
 export default function Footer() {
+    const {
+        data: metaData,
+        isError: isMetaDataError,
+        isLoading: isMetaDataLoading,
+    } = useQuery<LMIAMetaData>(["getMetaData"], getMetaData);
+    const mostRecentQuarter = metaData?.quarters?.[0];
     return (
         <footer
-            className={"px-4 py-2 font-semibold border dark:border-slate-600 dark:bg-gray-700 shadow rounded-b-none rounded-2xl flex h-10 justify-between w-full items-center text-black"}
-
+            className={
+                "px-4 py-2 font-semibold border dark:border-slate-600 dark:bg-gray-700 shadow rounded-b-none rounded-2xl flex h-10 justify-between w-full items-center text-black"
+            }
         >
             <div className="text-gray-700 dark:text-gray-200 font-light text-sm hover:text-blue-700 transform">
                 &copy; Knnect.com 2023
             </div>
+            {/* Show most recent record date */}
+            <div className="text-gray-700 dark:text-gray-200 font-light text-sm transform">
+                Data as of -{" "}
+                {isMetaDataLoading
+                    ? "Loading..."
+                    : mostRecentQuarter
+                    ? `${mostRecentQuarter.year}-${mostRecentQuarter.month}`
+                    : "No Data"}
+            </div>
             <div className="flex justify-center items-center gap-4 ">
-                <Link
-                    href="https://github.com/tmkasun/LMIA-stats"
-                    target="_blank"
-                >
+                <Link href="https://github.com/tmkasun/LMIA-stats" target="_blank">
                     <ToolTip message="Source Code">
                         <svg
                             className="w-6 h-6 text-gray-600 dark:text-white hover:text-blue-700"
@@ -36,8 +52,20 @@ export default function Footer() {
                     target="_blank"
                 >
                     <ToolTip message="Data Source">
-                        <svg className="w-6 h-6 text-gray-600 hover:text-blue-700 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 4c0 1.657-3.582 3-8 3S1 5.657 1 4m16 0c0-1.657-3.582-3-8-3S1 2.343 1 4m16 0v6M1 4v6m0 0c0 1.657 3.582 3 8 3s8-1.343 8-3M1 10v6c0 1.657 3.582 3 8 3s8-1.343 8-3v-6" />
+                        <svg
+                            className="w-6 h-6 text-gray-600 hover:text-blue-700 dark:text-white"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 18 20"
+                        >
+                            <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M17 4c0 1.657-3.582 3-8 3S1 5.657 1 4m16 0c0-1.657-3.582-3-8-3S1 2.343 1 4m16 0v6M1 4v6m0 0c0 1.657 3.582 3 8 3s8-1.343 8-3M1 10v6c0 1.657 3.582 3 8 3s8-1.343 8-3v-6"
+                            />
                         </svg>
                     </ToolTip>
                 </Link>

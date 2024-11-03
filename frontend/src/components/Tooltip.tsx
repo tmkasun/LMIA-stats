@@ -18,7 +18,7 @@ export const ToolTip = (props: ITooltip) => {
     >
       {children}
       {isToolTipOpen && (
-        <div className="absolute bottom-6 left-0 bg-gray-800 text-white p-2 whitespace-nowrap rounded-lg">
+        <div className="absolute bottom-6 right-0 bg-gray-800 text-white p-2 whitespace-nowrap rounded-lg">
           {message}
         </div>
       )}

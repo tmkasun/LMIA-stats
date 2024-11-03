@@ -19,7 +19,7 @@ const downloadFile = (url: string, filePath: string) => {
         new Promise((resolve, reject) => {
           response.data
             .pipe(fs.createWriteStream(filePath))
-            .on("finish", () => resolve(true))
+            .on("finish", () => resolve(filePath))
             .on("error", (e: Error) => reject(e));
         })
     );

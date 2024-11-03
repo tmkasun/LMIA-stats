@@ -8,8 +8,11 @@ var {
   collection: collectionName,
   server,
 } = require("./mongo.configs.json");
+//  When testing use ./mongo.test.configs.json
 
-const uri = `mongodb://${username}:${password}@${server}/IRCC?directConnection=true`;
+const uri = `mongodb://${username}:${encodeURIComponent(
+  password
+)}@${server}/${dbName}?directConnection=true`;
 
 const test = async () => {
   let database;
@@ -61,7 +64,12 @@ export async function initMongo() {
   database.command({ ping: 1 });
 
   logger.info("Pinged your deployment. You successfully connected to MongoDB!");
-  return await database.collection(collectionName);
+  return {
+    collection: await database.collection(collectionName),
+    close: async () => {
+      await client.close();
+    },
+  };
 }
 
 module.exports = initMongo;

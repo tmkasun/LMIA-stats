@@ -24,6 +24,7 @@ const quartersMap: { [key: string]: string } = {
 const downloadENStats = async () => {
   let enResources = 0;
   const metaData = await getLMIAMetaJSON();
+  const newDownloads = [];
   for (const resource of metaData.resources) {
     const { name, url, language } = resource;
     if (language.length === 1 && language.includes("en")) {
@@ -38,7 +39,13 @@ const downloadENStats = async () => {
         logger.info(`${from} => ${to}`);
         const fileName = `${to}.${fileExtension}`.replaceAll(" ", "-");
         try {
-          await downloadFile(url, path.join(LMIA_DATA_DIR, fileName));
+          const filePath = await downloadFile(
+            url,
+            path.join(LMIA_DATA_DIR, fileName)
+          );
+          if (filePath) {
+            newDownloads.push(fileName);
+          }
         } catch (error) {
           logger.error(`Error downloading ${fileName}`);
         }
@@ -52,7 +59,13 @@ const downloadENStats = async () => {
             "-"
           );
           try {
-            await downloadFile(url, path.join(LMIA_DATA_DIR, fileName));
+            const filePath = await downloadFile(
+              url,
+              path.join(LMIA_DATA_DIR, fileName)
+            );
+            if (filePath) {
+              newDownloads.push(filePath);
+            }
           } catch (error) {
             logger.error(`Error downloading ${fileName}`);
           }
@@ -63,16 +76,23 @@ const downloadENStats = async () => {
     }
   }
   logger.info(enResources);
+  return newDownloads;
 };
 
-const parseData = async (specificQuarter: null | string = null) => {
+const parseData = async (specificQuarter?: string[]) => {
   let dataFiles;
   if (specificQuarter) {
-    dataFiles = [specificQuarter];
+    dataFiles = specificQuarter;
   } else {
     dataFiles = await getDataFiles();
   }
-  const db = await initDB();
+  let db: any;
+  let _db = await initDB();
+  if (IS_CLOUD) {
+    db = _db.collection;
+  } else {
+    db = _db;
+  }
   let grandTotalValidData = 0;
   for (const dataFile of dataFiles) {
     const filePath = path.join(LMIA_DATA_DIR, dataFile);
@@ -210,7 +230,11 @@ const parseData = async (specificQuarter: null | string = null) => {
   }
   logger.info(`Closing DB!`);
   // TODO:Check error db.close is not a function
-  await db.close();
+  if (IS_CLOUD) {
+    await _db.close();
+  } else {
+    await db.close();
+  }
 };
 
 const initDB = async () => {
@@ -234,5 +258,12 @@ const initDB = async () => {
   return db;
 };
 
-// downloadENStats();
-parseData();
+(async () => {
+  const newDownloads = await downloadENStats();
+  logger.info(newDownloads);
+  if (newDownloads.length > 0) {
+    await parseData(newDownloads);
+  } else {
+    logger.error("No new downloads!");
+  }
+})();

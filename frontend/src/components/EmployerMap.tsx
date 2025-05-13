@@ -2,7 +2,7 @@ import L, { LatLngTuple } from "leaflet";
 import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { IByAddress } from "~/types/employerStats";
-import React from "react";
+import ErrorBoundary from "./ErrorBoundary";
 interface IEmployerMap {
     addresses?: IByAddress[];
 }

@@ -21,7 +21,8 @@ export const EmployerMap = (props: IEmployerMap) => {
     if (!addresses) return "No addresses found";
     const firstAddress = addresses[0];
     if (!firstAddress) return "First address is missing";
-    const center = [addresses[0].geolocation?.lat, addresses[0].geolocation?.lon] as LatLngTuple;
+    let center = [addresses[0].geolocation?.lat, addresses[0].geolocation?.lon] as LatLngTuple;
+    center = center.map((coordinate) => (coordinate === undefined ? 0 : coordinate)) as LatLngTuple;
     return (
         <ErrorBoundary>
             <MapContainer tap={false} zoomControl={false} className="h-96" center={center} zoom={8} scrollWheelZoom>
